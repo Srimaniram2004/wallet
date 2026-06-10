@@ -34,35 +34,35 @@ class _CurrencyScreenState
       "name": "Indian Rupee",
       "symbol": "₹",
       "code": "INR",
-      "flag": "🇮🇳",
+      //"flag": "🇮🇳",
     },
 
     {
       "name": "US Dollar",
       "symbol": "\$",
       "code": "USD",
-      "flag": "🇺🇸",
+      //"flag": "🇺🇸",
     },
 
     {
       "name": "Euro",
       "symbol": "€",
       "code": "EUR",
-      "flag": "🇪🇺",
+      //"flag": "🇪🇺",
     },
 
     {
       "name": "British Pound",
       "symbol": "£",
       "code": "GBP",
-      "flag": "🇬🇧",
+      //"flag": "🇬🇧",
     },
 
     {
       "name": "UAE Dirham",
       "symbol": "د.إ",
       "code": "AED",
-      "flag": "🇦🇪",
+     // "flag": "🇦🇪",
     },
   ];
 
@@ -213,7 +213,7 @@ class _CurrencyScreenState
                 // SUBTITLE
                 //////////////////////////////////////////////////
 
-                Text(
+               /* Text(
                   AppLocalizations.of(context).tr(
                     'choose_currency_subtitle',
                   ),
@@ -228,7 +228,7 @@ class _CurrencyScreenState
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 40),*/
 
                 //////////////////////////////////////////////////
                 // CURRENCY LIST
@@ -315,7 +315,7 @@ class _CurrencyScreenState
                               // FLAG + SYMBOL
                               //////////////////////////////////////////////////
 
-                              Container(
+                             /* Container(
 
                                 height: 72,
                                 width: 72,
@@ -380,7 +380,7 @@ class _CurrencyScreenState
                                 ),
                               ),
 
-                              const SizedBox(width: 18),
+                              const SizedBox(width: 18),*/
 
                               //////////////////////////////////////////////////
                               // DETAILS

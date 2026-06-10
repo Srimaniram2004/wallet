@@ -32,7 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
   //////////////////////////////////////////////////
   // LOGIN
   //////////////////////////////////////////////////
-
   Future<void> login() async {
     final loc = AppLocalizations.of(context);
 
@@ -41,66 +40,55 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (username.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            loc.tr('enter_credentials'),
-          ),
-        ),
+        SnackBar(content: Text(loc.tr('enter_credentials'))),
       );
       return;
     }
 
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isLoading = true);
 
-    int? userId =
-        await DBHelper.loginUser(username, password);
+    int? userId = await DBHelper.loginUser(username, password);
 
     if (!mounted) return;
 
-    setState(() {
-      isLoading = false;
-    });
+    setState(() => isLoading = false);
 
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            loc.tr('invalid_credentials'),
-          ),
-        ),
+        SnackBar(content: Text(loc.tr('invalid_credentials'))),
       );
       return;
     }
 
     //////////////////////////////////////////////////
-    // SAVE SESSION
+    // CLEAR OLD SESSION FIRST (IMPORTANT FIX)
     //////////////////////////////////////////////////
-
     final prefs = await SharedPreferences.getInstance();
 
+    await prefs.remove('userId');
+    await prefs.remove('username');
+    await prefs.remove('isLoggedIn');
+
+    //////////////////////////////////////////////////
+    // SAVE NEW SESSION
+    //////////////////////////////////////////////////
     await prefs.setBool('isLoggedIn', true);
     await prefs.setInt('userId', userId);
     await prefs.setString('username', username);
 
     //////////////////////////////////////////////////
-    // SUCCESS
+    // SUCCESS MESSAGE
     //////////////////////////////////////////////////
+    if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          loc.tr('login_successful'),
-        ),
-      ),
+      SnackBar(content: Text(loc.tr('login_successful'))),
     );
 
     //////////////////////////////////////////////////
-    // OPEN MAIN SCREEN
+    // NAVIGATE TO MAIN SCREEN (CLEAR STACK)
     //////////////////////////////////////////////////
-
-    Navigator.pushReplacement(
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (_) => MainScreen(
@@ -109,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onLocaleChange: widget.onLocaleChange,
         ),
       ),
+      (route) => false,
     );
   }
 
@@ -142,30 +131,21 @@ class _LoginScreenState extends State<LoginScreen> {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: 450,
-                ),
+                constraints: const BoxConstraints(maxWidth: 450),
                 child: Card(
                   elevation: 15,
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(25),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(25),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        //////////////////////////////////////////////////
-                        // LOGO
-                        //////////////////////////////////////////////////
-
                         Container(
-                          padding:
-                              const EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.teal
-                                .withOpacity(0.15),
+                            color: Colors.teal.withOpacity(0.15),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -177,79 +157,48 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 20),
 
-                        //////////////////////////////////////////////////
-                        // TITLE
-                        //////////////////////////////////////////////////
-
                         Text(
                           loc.tr('wallet_login'),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 28,
-                            fontWeight:
-                                FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
 
                         const SizedBox(height: 30),
 
-                        //////////////////////////////////////////////////
-                        // USERNAME
-                        //////////////////////////////////////////////////
-
                         TextField(
-                          controller:
-                              usernameController,
+                          controller: usernameController,
                           decoration: InputDecoration(
-                            labelText:
-                                loc.tr('username'),
-                            prefixIcon: const Icon(
-                              Icons.person,
-                            ),
-                            border:
-                                OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius
-                                      .circular(15),
+                            labelText: loc.tr('username'),
+                            prefixIcon: const Icon(Icons.person),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
                             ),
                           ),
                         ),
 
                         const SizedBox(height: 20),
 
-                        //////////////////////////////////////////////////
-                        // PASSWORD
-                        //////////////////////////////////////////////////
-
                         TextField(
-                          controller:
-                              passwordController,
-                          obscureText:
-                              obscurePassword,
+                          controller: passwordController,
+                          obscureText: obscurePassword,
                           decoration: InputDecoration(
-                            labelText:
-                                loc.tr('password'),
-                            prefixIcon: const Icon(
-                              Icons.lock,
-                            ),
-                            border:
-                                OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius
-                                      .circular(15),
+                            labelText: loc.tr('password'),
+                            prefixIcon: const Icon(Icons.lock),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 obscurePassword
-                                    ? Icons
-                                        .visibility
-                                    : Icons
-                                        .visibility_off,
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
-                                  obscurePassword =
-                                      !obscurePassword;
+                                  obscurePassword = !obscurePassword;
                                 });
                               },
                             ),
@@ -258,71 +207,36 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 25),
 
-                        //////////////////////////////////////////////////
-                        // LOGIN BUTTON
-                        //////////////////////////////////////////////////
-
                         SizedBox(
                           width: double.infinity,
                           height: 55,
                           child: ElevatedButton(
-                            onPressed:
-                                isLoading
-                                    ? null
-                                    : login,
-                            style:
-                                ElevatedButton.styleFrom(
-                              shape:
-                                  RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius
-                                        .circular(
-                                            15),
-                              ),
-                            ),
-                            child:
-                                isLoading
-                                    ? const CircularProgressIndicator()
-                                    : Text(
-                                      loc.tr(
-                                        'login',
-                                      ),
-                                      style:
-                                          const TextStyle(
-                                            fontSize:
-                                                18,
-                                            fontWeight:
-                                                FontWeight
-                                                    .bold,
-                                          ),
+                            onPressed: isLoading ? null : login,
+                            child: isLoading
+                                ? const CircularProgressIndicator()
+                                : Text(
+                                    loc.tr('login'),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
                                     ),
+                                  ),
                           ),
                         ),
 
                         const SizedBox(height: 15),
-
-                        //////////////////////////////////////////////////
-                        // REGISTER
-                        //////////////////////////////////////////////////
 
                         TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder:
-                                    (_) =>
-                                        const RegisterScreen(),
+                                builder: (_) =>
+                                    const RegisterScreen(),
                               ),
                             );
                           },
-                          child: Text(
-                            loc.tr(
-                              'register_prompt',
-                            ),
-                            textAlign:
-                                TextAlign.center,
-                          ),
+                          child: Text(loc.tr('register_prompt')),
                         ),
                       ],
                     ),

@@ -1,524 +1,489 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app_localization.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 
-class AddScreen extends StatefulWidget {
-  final List<String> categories;
-
-
-  final Map<String, List<String>> subCategories;
-
-  const AddScreen({
-    super.key,
-    required this.categories,
-    required this.subCategories,
-  });
-
-  @override
-  State<AddScreen> createState() => _AddScreenState();
-}
-
-class _AddScreenState extends State<AddScreen> {
-
-  final controller = TextEditingController();
+  class AddScreen extends StatefulWidget {
+    final List<String> categories;
 
 
-  String type = "expense";  
+    final Map<String, List<String>> subCategories;
 
-  @override
-void didChangeDependencies() {
-  super.didChangeDependencies();
+    const AddScreen({
+      super.key,
+      required this.categories,
+      required this.subCategories,
+    });
 
-  type ??=
-      AppLocalizations.of(context)
-          .translate('expense');
-}
-
-
-
-  //String category = "Food";
-  String? category;
-
-
-  String? subCategory;
-
- 
-
-  String currencySymbol = "₹";
-
-   
-
-    void _setCategoryForType(String selectedType) {
-    if (widget.categories.isEmpty) return;
-
-    if (selectedType == "Income") {
-      final incomeCategory = widget.categories.firstWhere(
-        (e) =>
-            e.toLowerCase().contains('salary') ||
-            e.toLowerCase().contains('income'),
-        orElse: () => widget.categories.first,
-      );
-
-      category = incomeCategory;
-    } else {
-      final expenseCategory = widget.categories.firstWhere(
-        (e) =>
-            e.toLowerCase().contains('food') ||
-            e.toLowerCase().contains('expense'),
-        orElse: () => widget.categories.first,
-      );
-
-      category = expenseCategory;
-    }
-
-    _loadSubCategory();
+    @override
+    State<AddScreen> createState() => _AddScreenState();
   }
 
-  @override
-  void initState() {
-    super.initState();
+  class _AddScreenState extends State<AddScreen> {
 
-    loadCurrency();
+    final controller = TextEditingController();
 
-    if (widget.categories.isNotEmpty) {
-      category = null;
-      subCategory = null;
-}
+
+    String type = "expense";  
+
+    @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    type ??=
+        AppLocalizations.of(context)
+            .translate('expense');
   }
 
-  //////////////////////////////////////////////////
-  // LOAD CURRENCY
-  //////////////////////////////////////////////////
 
-  Future<void> loadCurrency() async {
 
-    final prefs =
-        await SharedPreferences.getInstance();
+    //String category = "Food";
+    String? category;
 
+
+    String? subCategory;
+    String? attachmentPath;
+
+  
+
+    String currencySymbol = "₹";
+
+    
+Future<void> pickImage() async {
+  final picker = ImagePicker();
+
+  final XFile? image =
+      await picker.pickImage(
+    source: ImageSource.gallery,
+  );
+
+  if (image != null) {
     setState(() {
-
-      currencySymbol =
-          prefs.getString('currency') ?? "₹";
+      attachmentPath = image.path;
     });
   }
+}
 
-  //////////////////////////////////////////////////
-  // LOAD SUBCATEGORY
-  //////////////////////////////////////////////////
+Future<void> pickFile() async {
+  final result =
+      await FilePicker.platform.pickFiles();
+
+  if (result != null) {
+    setState(() {
+      attachmentPath =
+          result.files.single.path;
+    });
+  }
+}
+
+
+void _setCategoryForType(String selectedType) {
+      if (widget.categories.isEmpty) return;
+
+      if (selectedType == "Income") {
+        final incomeCategory = widget.categories.firstWhere(
+          (e) =>
+              e.toLowerCase().contains('salary') ||
+              e.toLowerCase().contains('income'),
+          orElse: () => widget.categories.first,
+        );
+
+        category = incomeCategory;
+      } else {
+        final expenseCategory = widget.categories.firstWhere(
+          (e) =>
+              e.toLowerCase().contains('food') ||
+              e.toLowerCase().contains('expense'),
+          orElse: () => widget.categories.first,
+        );
+
+        category = expenseCategory;
+      }
+
+      _loadSubCategory();
+    }
+
+    @override
+    void initState() {
+      super.initState();
+
+      loadCurrency();
+
+      if (widget.categories.isNotEmpty) {
+        category = null;
+        subCategory = null;
+  }
+    }
+
+    //////////////////////////////////////////////////
+    // LOAD CURRENCY
+    //////////////////////////////////////////////////
+
+    Future<void> loadCurrency() async {
+
+      final prefs =
+          await SharedPreferences.getInstance();
+
+      setState(() {
+
+       currencySymbol =
+            prefs.getString('currency') ?? "₹";
+      });
+    }
+
+    //////////////////////////////////////////////////
+    // LOAD SUBCATEGORY
+    //////////////////////////////////////////////////
 void _loadSubCategory() {
-
   if (category == null) {
     subCategory = null;
     return;
   }
 
   final subs =
-      widget.subCategories[category!];
+      widget.subCategories[
+        category!.toLowerCase()
+      ];
 
-  if (subs != null &&
-      subs.isNotEmpty) {
-
-    subCategory = subs[0];
-
+  if (subs != null && subs.isNotEmpty) {
+    subCategory = subs.first;
   } else {
-
     subCategory = null;
   }
+
 }
-//save
-void save() {
+  //save
+  void save() {
 
-  final amount =
-      double.tryParse(controller.text);
+    final amount =
+        double.tryParse(controller.text);
 
-  if (amount == null ||
-      amount <= 0 ||
-      category == null) {
-    return;
+    if (amount == null ||
+        amount <= 0 ||
+        category == null) {
+      return;
+    }
+
+    Navigator.pop(context, {
+
+      'amount': amount,
+
+      'type': type,
+
+      'category': category,
+
+      'subCategory': subCategory,
+      'attachment' : attachmentPath,
+    });
   }
 
-  Navigator.pop(context, {
+  
 
-    'amount': amount,
+    @override
+    void dispose() {
+      controller.dispose();
+      super.dispose();
+    }
 
-    'type': type,
+    @override
+    Widget build(BuildContext context) {
 
-    'category': category,
+      final isDark =
+          Theme.of(context).brightness ==
+              Brightness.dark;
 
-    'subCategory': subCategory,
-  });
-}
+      final bgColor =
+          isDark
+              ? const Color(0xFF121212)
+              : const Color(0xFFF5F6FA);
 
- 
+      final cardColor =
+          isDark
+              ? const Color(0xFF1E1E1E)
+              : Colors.white;
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+      final fieldColor =
+          isDark
+              ? const Color(0xFF2A2A2A)
+              : Colors.grey.shade100;
 
-  @override
-  Widget build(BuildContext context) {
+      final textColor =
+          isDark
+              ? Colors.white
+              : Colors.black;
 
-    final isDark =
-        Theme.of(context).brightness ==
-            Brightness.dark;
-
-    final bgColor =
-        isDark
-            ? const Color(0xFF121212)
-            : const Color(0xFFF5F6FA);
-
-    final cardColor =
-        isDark
-            ? const Color(0xFF1E1E1E)
-            : Colors.white;
-
-    final fieldColor =
-        isDark
-            ? const Color(0xFF2A2A2A)
-            : Colors.grey.shade100;
-
-    final textColor =
-        isDark
-            ? Colors.white
-            : Colors.black;
-
-    final subList =
+     final subList =
     category == null
         ? <String>[]
-        : widget.subCategories[category!] ?? [];
+        : widget.subCategories[
+              category!.toLowerCase()
+          ] ??
+          [];
 
-    return Scaffold(
+      return Scaffold(
 
-      backgroundColor: bgColor,
+        backgroundColor: bgColor,
 
 
-      appBar: AppBar(
+        appBar: AppBar(
 
-          title: Text(
-            AppLocalizations.of(context)
-                .translate('add_transaction'),
-          ),
+            title: Text(
+              AppLocalizations.of(context)
+                  .translate('add_transaction'),
+            ),
 
-        centerTitle: true,
+          centerTitle: true,
 
-        backgroundColor:
-            isDark
-                ? Colors.black
-                : Colors.teal,
+          backgroundColor:
+              isDark
+                  ? Colors.black
+                  : Colors.teal,
 
-        elevation: 0,
-      ),
+          elevation: 0,
+        ),
 
-     
+      
 
-      body: Padding(
-
-        padding:
-            const EdgeInsets.all(16),
-
-        child: Container(
+        body: Padding(
 
           padding:
-              const EdgeInsets.all(20),
+              const EdgeInsets.all(16),
 
-          decoration: BoxDecoration(
+          child: Container(
 
-            color: cardColor,
+            padding:
+                const EdgeInsets.all(20),
 
-            borderRadius:
-                BorderRadius.circular(18),
+            decoration: BoxDecoration(
 
-            boxShadow: [
+              color: cardColor,
 
-              BoxShadow(
+              borderRadius:
+                  BorderRadius.circular(18),
 
-                color:
-                    isDark
-                        ? Colors.black54
-                        : Colors.black
-                            .withOpacity(0.05),
+              boxShadow: [
 
-                blurRadius: 12,
+                BoxShadow(
 
-                offset:
-                    const Offset(0, 6),
-              ),
-            ],
-          ),
+                  color:
+                      isDark
+                          ? Colors.black54
+                          : Colors.black
+                              .withOpacity(0.05),
 
-          child: Column(
-            children: [
+                  blurRadius: 12,
 
-              //////////////////////////////////////////////////
-              // AMOUNT INPUT
-              //////////////////////////////////////////////////
-
-              TextField(
-
-                controller: controller,
-
-                keyboardType:
-                    TextInputType.number,
-
-                style:
-                    TextStyle(
-                  color: textColor,
+                  offset:
+                      const Offset(0, 6),
                 ),
+              ],
+            ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
 
-                decoration: InputDecoration(
+                //////////////////////////////////////////////////
+                // AMOUNT INPUT
+                //////////////////////////////////////////////////
 
-                  labelText: AppLocalizations.of(context)
-                    .translate('enter_amount'),
+                TextField(
 
-                  labelStyle:
+                  controller: controller,
+
+                  keyboardType:
+                      TextInputType.number,
+
+                  style:
                       TextStyle(
                     color: textColor,
                   ),
 
-                  //////////////////////////////////////////////////
-                  // CURRENCY ICON
-                  //////////////////////////////////////////////////
+                  decoration: InputDecoration(
 
-                  prefixIcon: Icon(
+                    labelText: AppLocalizations.of(context)
+                      .translate('enter_amount'),
 
-                    currencySymbol == "₹"
-                        ? Icons.currency_rupee
+                    labelStyle:
+                        TextStyle(
+                      color: textColor,
+                    ),
 
-                        : currencySymbol == "\$"
-                            ? Icons.attach_money
+                    //////////////////////////////////////////////////
+                    // CURRENCY ICON
+                    //////////////////////////////////////////////////
 
-                            : currencySymbol == "€"
-                                ? Icons.euro
+                   prefixIcon: Icon(
 
-                                : currencySymbol == "£"
-                                    ? Icons.currency_pound
+                      currencySymbol == "₹"
+                          ? Icons.currency_rupee
 
-                                    : Icons.monetization_on,
+                          : currencySymbol == "\$"
+                              ? Icons.attach_money
 
-                    color:
-                        isDark
-                            ? Colors.tealAccent
-                            : Colors.teal,
-                  ),
+                              : currencySymbol == "€"
+                                  ? Icons.euro
 
-                  //////////////////////////////////////////////////
-                  // PREFIX TEXT
-                  //////////////////////////////////////////////////
+                                  : currencySymbol == "£"
+                                      ? Icons.currency_pound
 
-                  prefixText:
-                      "$currencySymbol ",
+                                      : Icons.monetization_on,
 
-                  prefixStyle:
-                      TextStyle(
-                    color: textColor,
-                    fontWeight:
-                        FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                      color:
+                          isDark
+                              ? Colors.tealAccent
+                              : Colors.teal,
+                    ),
 
-                  filled: true,
+                    //////////////////////////////////////////////////
+                    // PREFIX TEXT
+                    //////////////////////////////////////////////////
 
-                  fillColor: fieldColor,
+                    //prefixText:
+                      //  "$currencySymbol ",
 
-                  border: OutlineInputBorder(
+                    prefixStyle:
+                        TextStyle(
+                      color: textColor,
+                      fontWeight:
+                          FontWeight.bold,
+                      fontSize: 16,
+                    ),
 
-                    borderRadius:
-                        BorderRadius.circular(12),
+                    filled: true,
 
-                    borderSide:
-                        BorderSide.none,
-                  ),
-                ),
-              ),
+                    fillColor: fieldColor,
 
-              const SizedBox(height: 20),
+                    border: OutlineInputBorder(
 
-              //////////////////////////////////////////////////
-              // TYPE SELECTOR
-              //////////////////////////////////////////////////
+                      borderRadius:
+                          BorderRadius.circular(12),
 
-              Row(
-                children: [
-
-                  //////////////////////////////////////////////////
-                  // INCOME
-                  //////////////////////////////////////////////////
-
-                  Expanded(
-                    child: GestureDetector(
-
-                      onTap: () {
-                          setState(() {
-                            type = "Income";
-                            _setCategoryForType("Income");
-                          });
-                        },
-
-                      child: Container(
-
-                        padding:
-                            const EdgeInsets.all(12),
-
-                        decoration: BoxDecoration(
-
-                          color:
-                              type == "Income"
-                                  ? Colors.green
-                                  : fieldColor,
-
-                          borderRadius:
-                              BorderRadius.circular(12),
-                        ),
-
-                        child: Center(
-                          child: Text(
-
-                               AppLocalizations.of(context)
-                              .translate('income'),
-
-                            style: TextStyle(
-
-                              color:
-                                  type == "Income"
-                                      ? Colors.white
-                                      : textColor,
-
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
+                      borderSide:
+                          BorderSide.none,
                     ),
                   ),
+                ),
 
-                  const SizedBox(width: 10),
-                  // EXPENSE
-                  
+                const SizedBox(height: 20),
 
-                  Expanded(
-                    child: GestureDetector(
+                //////////////////////////////////////////////////
+                // TYPE SELECTOR
+                //////////////////////////////////////////////////
 
-                      onTap: () {
+                Row(
+                  children: [
+
+                    //////////////////////////////////////////////////
+                    // INCOME
+                    //////////////////////////////////////////////////
+
+                    Expanded(
+                      child: GestureDetector(
+
+                        onTap: () {
                             setState(() {
-                              type = "Expense";
-                              _setCategoryForType("Expense");
+                              type = "Income";
+                              _setCategoryForType("Income");
                             });
                           },
 
-                      child: Container(
+                        child: Container(
 
-                        padding:
-                            const EdgeInsets.all(12),
+                          padding:
+                              const EdgeInsets.all(12),
 
-                        decoration: BoxDecoration(
+                          decoration: BoxDecoration(
 
-                          color:
-                              type == "Expense"
-                                  ? Colors.red
-                                  : fieldColor,
+                            color:
+                                type == "Income"
+                                    ? Colors.green
+                                    : fieldColor,
 
-                          borderRadius:
-                              BorderRadius.circular(12),
-                        ),
+                            borderRadius:
+                                BorderRadius.circular(12),
+                          ),
 
-                        child: Center(
-                          child: Text(
+                          child: Center(
+                            child: Text(
 
-                            AppLocalizations.of(context)
-                            .translate('expense'),
+                                AppLocalizations.of(context)
+                                .translate('income'),
 
-                            style: TextStyle(
+                              style: TextStyle(
 
-                              color:
-                                  type == "Expense"
-                                      ? Colors.white
-                                      : textColor,
+                                color:
+                                    type == "Income"
+                                        ? Colors.white
+                                        : textColor,
 
-                              fontWeight:
-                                  FontWeight.bold,
+                                fontWeight:
+                                    FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
 
-              const SizedBox(height: 20),
+                    const SizedBox(width: 10),
+                    // EXPENSE
+                    
 
-            //category dd
+                    Expanded(
+                      child: GestureDetector(
 
-              Container(
+                        onTap: () {
+                              setState(() {
+                                type = "Expense";
+                                _setCategoryForType("Expense");
+                              });
+                            },
 
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 12,
-                ),
+                        child: Container(
 
-                decoration: BoxDecoration(
+                          padding:
+                              const EdgeInsets.all(12),
 
-                  color: fieldColor,
+                          decoration: BoxDecoration(
 
-                  borderRadius:
-                      BorderRadius.circular(12),
-                ),
+                            color:
+                                type == "Expense"
+                                    ? Colors.red
+                                    : fieldColor,
 
-                child: DropdownButtonHideUnderline(
+                            borderRadius:
+                                BorderRadius.circular(12),
+                          ),
 
-                  child: DropdownButton<String>(
+                          child: Center(
+                            child: Text(
 
-                  value: category,
+                              AppLocalizations.of(context)
+                              .translate('expense'),
 
-                  hint: Text(
-                    AppLocalizations.of(context)
-                        .translate('select_category'),
-                    style: TextStyle(
-                      color: textColor,
-                    ),
-                  ),
+                              style: TextStyle(
 
-                    dropdownColor: cardColor,
+                                color:
+                                    type == "Expense"
+                                        ? Colors.white
+                                        : textColor,
 
-                    isExpanded: true,
-
-                    items: widget.categories.map((e) {
-
-                      return DropdownMenuItem<String>(
-
-                        value: e,
-
-                       child: Text(
-                        AppLocalizations.of(context)
-                            .translate(e.toLowerCase()),
-                        style: TextStyle(
-                          color: textColor,
+                                fontWeight:
+                                    FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                      );
-
-                  }).toList(),
-
-                  onChanged: (v) {
-
-                    setState(() {
-
-                      category = v;
-
-                      _loadSubCategory();
-                    });
-                  },
+                    ),
+                  ],
                 ),
-                ),
-              ),
 
-              const SizedBox(height: 15),
+                const SizedBox(height: 20),
 
-
-              if (subList.isNotEmpty)
+              //category dd
 
                 Container(
 
@@ -539,87 +504,204 @@ void save() {
 
                     child: DropdownButton<String>(
 
-                      value: subCategory,
+                    value: category,
 
-                      hint:
-                          const Text(
-                        "Select Subcategory",
+                    hint: Text(
+                      AppLocalizations.of(context)
+                          .translate('select_category'),
+                      style: TextStyle(
+                        color: textColor,
                       ),
+                    ),
 
                       dropdownColor: cardColor,
 
                       isExpanded: true,
 
-                      items:
-                          subList.map((e) {
+                      items: widget.categories.map((e) {
 
-                        return DropdownMenuItem(
+                        return DropdownMenuItem<String>(
 
                           value: e,
 
-                          child: Text(
+                        child: Text(
+                          AppLocalizations.of(context)
+                              .translate(e.toLowerCase()),
+                          style: TextStyle(
+                            color: textColor,
+                          ),
+                        ),
+                        );
 
-                            e,
+                    }).toList(),
 
+                    onChanged: (v) {
+
+                      setState(() {
+
+                        category = v;
+
+                        _loadSubCategory();
+                      });
+                    },
+                  ),
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+
+                if (subList.isNotEmpty)
+
+                  Container(
+
+                    padding:
+                        const EdgeInsets.symmetric(
+                      horizontal: 12,
+                    ),
+
+                    decoration: BoxDecoration(
+
+                      color: fieldColor,
+
+                      borderRadius:
+                          BorderRadius.circular(12),
+                    ),
+
+                    child: DropdownButtonHideUnderline(
+
+                      child: DropdownButton<String>(
+
+                        value: subCategory,
+
+                        hint:
+                            const Text(
+                          "Select Subcategory",
+                        ),
+
+                        dropdownColor: cardColor,
+
+                        isExpanded: true,
+
+                        items:
+                            subList.map((e) {
+
+                          return DropdownMenuItem(
+
+                            value: e,
+
+                            child: Text(
+                            AppLocalizations.of(context).tr(e),
                             style: TextStyle(
                               color: textColor,
                             ),
                           ),
-                        );
-                      }).toList(),
+                          );
+                        }).toList(),
 
-                      onChanged: (v) {
+                        onChanged: (v) {
 
-                        setState(() {
+                          setState(() {
 
-                          subCategory = v;
-                        });
-                      },
+                            subCategory = v;
+                          });
+                        },
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 15),
 
-              const Spacer(),
+                  OutlinedButton.icon(
+                    onPressed: pickImage,
+                    icon: const Icon(Icons.image),
+                    label: const Text("Attach Image"),
+                  ),
 
-              SizedBox(
+                  const SizedBox(height: 10),
 
-                width: double.infinity,
+                  OutlinedButton.icon(
+                    onPressed: pickFile,
+                    icon: const Icon(Icons.attach_file),
+                    label: const Text("Attach File"),
+                  ),
 
-                child: ElevatedButton.icon(
+                  if (attachmentPath != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                      children: [
 
-                  onPressed: save,
+                        if (attachmentPath!
+                            .toLowerCase()
+                            .endsWith('.jpg') ||
+                            attachmentPath!
+                            .toLowerCase()
+                            .endsWith('.jpeg') ||
+                            attachmentPath!
+                            .toLowerCase()
+                            .endsWith('.png'))
+                          SizedBox(
+                            height: 120,
+                            child: Image.file(
+                              File(attachmentPath!),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
 
-                  icon:
-                      const Icon(Icons.save),
+                        const SizedBox(height: 5),
 
-                  label:
-                    Text(
-                          AppLocalizations.of(context)
-                              .translate('save_transaction'),
+                        Text(
+                          attachmentPath!
+                              .split('/')
+                              .last,
+                          textAlign: TextAlign.center,
                         ),
+                      ],
+                    ),
+                  ),
 
-                  style:
-                      ElevatedButton.styleFrom(
+                const SizedBox(height: 20),
 
-                    backgroundColor:
-                        isDark
-                            ? Colors.teal.shade700
-                            : Colors.teal,
+                SizedBox(
 
-                    foregroundColor:
-                        Colors.white,
+                  width: double.infinity,
 
-                    padding:
-                        const EdgeInsets.symmetric(
-                      vertical: 14,
+                  child: ElevatedButton.icon(
+
+                    onPressed: save,
+
+                    icon:
+                        const Icon(Icons.save),
+
+                    label:
+                      Text(
+                            AppLocalizations.of(context)
+                                .translate('save_transaction'),
+                          ),
+
+                    style:
+                        ElevatedButton.styleFrom(
+
+                      backgroundColor:
+                          isDark
+                              ? Colors.teal.shade700
+                              : Colors.teal,
+
+                      foregroundColor:
+                          Colors.white,
+
+                      padding:
+                          const EdgeInsets.symmetric(
+                        vertical: 14,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
+          ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
-}

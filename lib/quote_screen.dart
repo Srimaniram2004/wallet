@@ -348,41 +348,27 @@ class _QuoteScreenState
                     //////////////////////////////////////////////////
                     // TITLE
                     //////////////////////////////////////////////////
-
                     ShaderMask(
-
-                      shaderCallback: (bounds) {
-
-                        return const LinearGradient(
-
-                          colors: [
-
-                            Colors.white,
-
-                            Color(0xFF67E8F9),
-                          ],
-                        ).createShader(bounds);
-                      },
-
-                      child:   Text(
-
-                         AppLocalizations.of(context).tr('smart_wallet'),
-
-                        style: TextStyle(
-
-                          fontSize: 34,
-
-                          fontWeight:
-                              FontWeight.w900,
-
-                          letterSpacing: 2,
-
-                          color: Colors.white,
+                        shaderCallback: (bounds) {
+                          return const LinearGradient(
+                            colors: [Colors.white, Color(0xFF67E8F9)],
+                          ).createShader(bounds);
+                        },
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            AppLocalizations.of(context).tr('smart_wallet'),
+                            textAlign: TextAlign.center, //aligment
+                            style: const TextStyle(
+                              fontSize: 34,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
 
-                    const SizedBox(height: 14),
 
                     //////////////////////////////////////////////////
                     // SUBTITLE

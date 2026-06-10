@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'attachment_viewer_screen.dart';
 
 class AllTransactionsScreen extends StatelessWidget {
   final List<Map<String, dynamic>> transactions;
@@ -376,28 +376,59 @@ class AllTransactionsScreen extends StatelessWidget {
                                   //////////////////////////////////////////////////
 
                                   Text(
-
-                                    tx['date'] != null
-                                        ? dateFormat.format(
-                                            DateTime.parse(
-                                              tx['date']
-                                                  .toString(),
-                                            ),
-                                          )
-                                        : "",
-
-                                    style: TextStyle(
-
-                                      fontSize: 11,
-
-                                      color: Colors
-                                          .grey[500],
+                                      tx['date'] != null
+                                          ? dateFormat.format(
+                                              DateTime.parse(
+                                                tx['date'].toString(),
+                                              ),
+                                            )
+                                          : "",
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey[500],
+                                      ),
                                     ),
-                                  ),
+
+                                    if (tx['attachment'] != null &&
+                                        tx['attachment'].toString().isNotEmpty)
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  AttachmentViewerScreen(
+                                                filePath: tx['attachment'],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.only(top: 4),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.attach_file,
+                                                size: 14,
+                                                color: Colors.blue,
+                                              ),
+                                              SizedBox(width: 4),
+                                              Text(
+                                                "View Attachment",
+                                                style: TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 11,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                 ],
                               ),
                             ),
-
+                            
                             //////////////////////////////////////////////////
                             // AMOUNT
                             //////////////////////////////////////////////////

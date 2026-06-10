@@ -216,84 +216,84 @@ class LanguageScreen extends StatelessWidget {
 
                   buildLanguageCard(
                     context,
-                    "🇬🇧",
+                    //"🇬🇧",
                     "English",
                     "en",
                   ),
 
                   buildLanguageCard(
                     context,
-                    "🇮🇳",
+                   // "🇮🇳",
                     "தமிழ் (Tamil)",
                     "ta",
                   ),
 
                   buildLanguageCard(
                     context,
-                    "🇮🇳",
+                    //"🇮🇳",
                     "हिन्दी (Hindi)",
                     "hi",
                   ),
 
                   buildLanguageCard(
                     context,
-                    "🇮🇳",
+                   // "🇮🇳",
                     "తెలుగు (Telugu)",
                     "te",
                   ),
 
                   buildLanguageCard(
                     context,
-                    "🇮🇳",
+                    //"🇮🇳",
                     "മലയാളം (Malayalam)",
                     "ml",
                   ),
 
                   buildLanguageCard(
                     context,
-                    "🇮🇳",
+                    //"🇮🇳",
                     "ಕನ್ನಡ (Kannada)",
                     "kn",
                   ),
 
                   buildLanguageCard(
                     context,
-                    "🇧🇩",
+                   // "🇧🇩",
                     "বাংলা (Bengali)",
                     "bn",
                   ),
 
                   buildLanguageCard(
                     context,
-                    "🇮🇳",
+                    //"🇮🇳",
                     "ગુજરાતી (Gujarati)",
                     "gu",
                   ),
 
                   buildLanguageCard(
                     context,
-                    "🇮🇳",
+                    //"🇮🇳",
                     "मराठी (Marathi)",
                     "mr",
                   ),
 
                   buildLanguageCard(
                     context,
-                    "🇮🇳",
+                    //"🇮🇳",
                     "ਪੰਜਾਬੀ (Punjabi)",
                     "pa",
                   ),
 
                   buildLanguageCard(
                     context,
-                    "🇵🇰",
+                    //"🇵🇰",
                     "اُردُو (Urdu)",
                     "ur",
                   ),
 
                   buildLanguageCard(
                     context,
-                    "🇮🇳",
+                    //"🇮🇳",
                     "ଓଡ଼ିଆ (Odia)",
                     "or",
                   ),
@@ -313,7 +313,7 @@ class LanguageScreen extends StatelessWidget {
   //////////////////////////////////////////////////
   Widget buildLanguageCard(
     BuildContext context,
-    String flag,
+   // String flag,
     String language,
     String code,
   ) {
@@ -364,7 +364,7 @@ class LanguageScreen extends StatelessWidget {
               // FLAG
               //////////////////////////////////////////////////
 
-              Container(
+             /* Container(
 
                 height: 55,
                 width: 55,
@@ -391,7 +391,7 @@ class LanguageScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: 18),
+              const SizedBox(width: 18),*/
 
               //////////////////////////////////////////////////
               // LANGUAGE NAME

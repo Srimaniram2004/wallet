@@ -6,6 +6,7 @@ import 'add_screen.dart';
 import 'chart_screen.dart';
 import 'category_screen.dart';
 import 'settings_screen.dart';
+import 'report_screen.dart';
 
 import 'models/user_progress.dart';
 import 'widges/avatar_card.dart';
@@ -36,64 +37,37 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 
 
-/*void main() async {
-
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Notifications
-  await NotificationService.init();
-
-  // Schedule Morning & Evening Notifications
-  await NotificationService
-      .scheduleDailyNotifications();
-
-  final prefs =
-      await SharedPreferences.getInstance();
-
-  // final currencySelected =
-  //     prefs.getBool('currencySelected') ?? false;
-
-  final currencySelected = false;
-  await NotificationService
-    .showTestNotification();
-
-  runApp(
-    WalletApp(
-      currencySelected: currencySelected,
-    ),
-  );
-}*/
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ==============================
+
   // NOTIFICATIONS INIT
-  // ==============================
+
   await NotificationService.init();
   await NotificationService.scheduleDailyNotifications();
 
-  // ==============================
+
   // SHARED PREFS
-  // ==============================
+
   final prefs = await SharedPreferences.getInstance();
 
-  // ==============================
+ 
   // LOAD SAVED SETTINGS
-  // ==============================
+  
   
   final languageSelected = prefs.getBool('languageSelected') ?? false;
 
   final currencySelected = prefs.getBool('currencySelected') ?? false;
   final savedLanguage = prefs.getString('languageCode') ?? 'en';
-  // ==============================
+  
   // TEST NOTIFICATION (optional)
-  // ==============================
-  await NotificationService.showTestNotification();
 
-  // ==============================
+  //await NotificationService.showTestNotification();
+
+
   // RUN APP
-  // ==============================
+
   runApp(
     WalletApp(
       currencySelected: currencySelected,
@@ -359,7 +333,9 @@ Future<void> loadQuoteStatus() async {
   void setLocale(Locale locale) {
     setState(() {
       _locale = locale;
+      
     });
+     // loadData();
   }
 //check login status
 Future<void> checkLoginStatus() async {
@@ -737,48 +713,7 @@ Future<void> showProfileMenu() async {
 
 
 //load  gamification
-
 /*Future<void> loadGamification() async {
-
-  final prefs =
-      await SharedPreferences.getInstance();
-
-  progress = UserProgress(
-
-    xp:
-        prefs.getInt('xp') ?? 0,
-
-    level:
-        prefs.getInt('level') ?? 1,
-
-    stars:
-        prefs.getInt('stars') ?? 0,
-
-    streak:
-        prefs.getInt('streak') ?? 0,
-
-    avatar:
-        prefs.getString('avatar') ??
-            'assets/avatar1.png',
-
-    lastLogin:
-        prefs.getString('lastLogin') ?? '',
-  );
-
-  progress =
-      StreakService.updateLoginStreak(
-          progress);
-
-  progress =
-      XPService.updateAvatar(progress);
-
- 
-
-  await saveProgress();
-
-  setState(() {});
-}*/
-Future<void> loadGamification() async {
   final prefs = await SharedPreferences.getInstance();
 
   print("Loaded XP = ${prefs.getInt('xp')}");
@@ -799,8 +734,29 @@ Future<void> loadGamification() async {
   await saveProgress();
 
   setState(() {});
+}*/
+Future<void> loadGamification() async {
+  final prefs = await SharedPreferences.getInstance();
+  final userId = prefs.getInt('userId');
+
+  if (userId == null) return;
+
+  progress = UserProgress(
+    xp: prefs.getInt('xp_$userId') ?? 0,
+    level: prefs.getInt('level_$userId') ?? 1,
+    stars: prefs.getInt('stars_$userId') ?? 0,
+    streak: prefs.getInt('streak_$userId') ?? 0,
+    avatar: prefs.getString('avatar_$userId') ?? 'assets/avatar1.png',
+    lastLogin: prefs.getString('lastLogin_$userId') ?? '',
+  );
+
+  progress = StreakService.updateLoginStreak(progress);
+  progress = XPService.updateAvatar(progress);
+
+  await saveProgress();
+  setState(() {});
 }
-Future<void> saveProgress() async {
+/*Future<void> saveProgress() async {
 
   final prefs =
       await SharedPreferences.getInstance();
@@ -825,6 +781,19 @@ Future<void> saveProgress() async {
       progress.lastLogin);
 
     
+}*/
+Future<void> saveProgress() async {
+  final prefs = await SharedPreferences.getInstance();
+  final userId = prefs.getInt('userId');
+
+  if (userId == null) return;
+
+  await prefs.setInt('xp_$userId', progress.xp);
+  await prefs.setInt('level_$userId', progress.level);
+  await prefs.setInt('stars_$userId', progress.stars);
+  await prefs.setInt('streak_$userId', progress.streak);
+  await prefs.setString('avatar_$userId', progress.avatar);
+  await prefs.setString('lastLogin_$userId', progress.lastLogin);
 }
 
   //load data
@@ -906,23 +875,17 @@ Future<void> saveProgress() async {
     //////////////////////////////////////////////////
     // CATEGORY
     //////////////////////////////////////////////////
+Map<String, List<String>> temp = {};
 
-    Map<String, List<String>> temp = {};
+for (var c in cat) {
+  temp[c['name'].toString()] = [];
+}
 
-    for (var c in cat) {
+for (var entry in sub.entries) {
+  temp[entry.key] = List<String>.from(entry.value);
+}
 
-      temp[c['name'].toString()] = [];
-    }
 
-    for (var s in sub) {
-
-      if (temp.containsKey(
-          s['category'])) {
-
-        temp[s['category']]!
-            .add(s['name']);
-      }
-    }
 
     setState(() {
 
@@ -998,7 +961,7 @@ Future<void> saveProgress() async {
       // CATEGORY
       //////////////////////////////////////////////////
 
-      CategoryScreen(
+   /*   CategoryScreen(
 
         categories: categories,
 
@@ -1021,15 +984,32 @@ Future<void> saveProgress() async {
           await loadData();
         },
       ),
-
+*/
       //////////////////////////////////////////////////
       // REPORT
       //////////////////////////////////////////////////
 
-      ReportScreen(
-        data: transactions,
-        onRefresh: loadData,
-      ),
+      SettingsScreen(
+  onLanguageChanged: widget.onLocaleChange ?? (_) {},
+  isDark: widget.isDark,
+  toggleTheme: widget.toggleTheme,
+
+  transactions: transactions,
+  categories: categories,
+
+  onAddCategory: (name) async {
+    await DBHelper.insertCategory(name);
+    await loadData();
+  },
+
+  onAddSubCategory: (category, sub) async {
+    await DBHelper.insertSubCategory(
+      category,
+      sub,
+    );
+    await loadData();
+  },
+),  
     ];
 
     return Scaffold(
@@ -1142,6 +1122,7 @@ Future<void> saveProgress() async {
                       res['type'],
                       res['category'],
                       res['subCategory'] ?? "", // FIXED
+                      res['attachment'],
                     );
 
                     setState(() {
@@ -1189,13 +1170,13 @@ Future<void> saveProgress() async {
 
         NavigationDestination(
           icon: Icon(Icons.category),
-          label: AppLocalizations.of(context).tr('category'),
-        ),
-
-        NavigationDestination(
-          icon: Icon(Icons.settings),
           label: AppLocalizations.of(context).tr('settings'),
         ),
+
+        /*NavigationDestination(
+          icon: Icon(Icons.settings),
+          label: AppLocalizations.of(context).tr('settings'),
+        ),*/
       ],
       ),
     );
@@ -1259,11 +1240,11 @@ class HomeDashboard extends StatelessWidget {
               // HEADER
               //////////////////////////////////////////////////
 
-              Row(
+             /* Row(
                 children: [
                    Expanded(
                     child: Text(
-                       AppLocalizations.of(context).tr('my_wallet'),
+                      // AppLocalizations.of(context).tr('my_wallet'),
 
                       maxLines: 1,
 
@@ -1282,7 +1263,7 @@ class HomeDashboard extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 20),*/
 
               //////////////////////////////////////////////////
               // AVATAR CARD
@@ -1555,8 +1536,7 @@ class HomeDashboard extends StatelessWidget {
 
                             children: [
                               Text(
-                                tx['category']
-                                    .toString(),
+                                (AppLocalizations.of(context).tr(tx['category'].toString())),
 
                                 maxLines: 1,
 
@@ -1579,8 +1559,7 @@ class HomeDashboard extends StatelessWidget {
                                       .isNotEmpty)
 
                                 Text(
-                                  tx['subcategory']
-                                      .toString(),
+                                  (AppLocalizations.of(context).tr(tx['subcategory'].toString())),
 
                                   maxLines: 1,
 
