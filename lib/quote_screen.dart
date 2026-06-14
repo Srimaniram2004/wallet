@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'currency_screen.dart';
 import 'main.dart';
 import 'app_localization.dart';
-import 'screens/login_screen.dart';
+  
 
 class QuoteScreen extends StatefulWidget {
   final bool isDark;
@@ -85,27 +85,17 @@ class _QuoteScreenState
 
       //final prefs = await SharedPreferences.getInstance();
 
-            bool isLoggedIn =
-                prefs.getBool('isLoggedIn') ?? false;
-
-            if (currencySelected) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => isLoggedIn
-                      ? MainScreen(
-                          isDark: widget.isDark,
-                          toggleTheme: widget.toggleTheme,
-                        )
-                      : LoginScreen(
-                          isDark: widget.isDark,
-                          toggleTheme: widget.toggleTheme,
-                        ),
+           if (currencySelected) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MainScreen(
+                  isDark: widget.isDark,
+                  toggleTheme: widget.toggleTheme,
                 ),
-              );
-            }
-
-        // FIRST TIME USER
+              ),
+            );
+          }
         //////////////////////////////////////////////////
 
         else {

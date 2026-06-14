@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'attachment_viewer_screen.dart';
 
-class AllTransactionsScreen extends StatelessWidget {
+
+class AllTransactionsScreen extends StatefulWidget {
   final List<Map<String, dynamic>> transactions;
-  final Function(int) onDelete;
+final Function(int) onDelete;
 
   const AllTransactionsScreen({
     super.key,
@@ -12,26 +13,40 @@ class AllTransactionsScreen extends StatelessWidget {
     required this.onDelete,
   });
 
-  // ================= TOTAL INCOME =================
+  @override
+  State<AllTransactionsScreen> createState() =>
+      _AllTransactionsScreenState();
+}
+
+class _AllTransactionsScreenState
+    extends State<AllTransactionsScreen> {
+  late List<Map<String, dynamic>> transactions;
+
+  @override
+  void initState() {
+    super.initState();
+    transactions = List.from(widget.transactions);
+  }
+
   double getIncome() {
     return transactions
         .where((t) => t['type'] == "Income")
         .fold(
           0.0,
-          (sum, t) => sum + ((t['amount'] ?? 0) as num).toDouble(),
+          (sum, t) =>
+              sum + ((t['amount'] ?? 0) as num).toDouble(),
         );
   }
 
-  // ================= TOTAL EXPENSE =================
   double getExpense() {
     return transactions
         .where((t) => t['type'] == "Expense")
         .fold(
           0.0,
-          (sum, t) => sum + ((t['amount'] ?? 0) as num).toDouble(),
+          (sum, t) =>
+              sum + ((t['amount'] ?? 0) as num).toDouble(),
         );
   }
-
   @override
   Widget build(BuildContext context) {
     final isDark =
@@ -501,9 +516,43 @@ class AllTransactionsScreen extends StatelessWidget {
 
                                   color: Colors.grey,
 
-                                  onPressed: () =>
-                                      onDelete(
-                                          tx['id']),
+                                  onPressed: () async {
+                                  final result = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Delete Transaction'),
+                                      content: const Text(
+                                        'Are you sure you want to delete this transaction?',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, false),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () => Navigator.pop(context, true),
+                                          child: const Text('Delete'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (result == true) {
+                                         widget.onDelete(tx['id']);
+
+                                  setState(() {
+                                    transactions.removeWhere(
+                                      (item) => item['id'] == tx['id'],
+                                    );
+                                  });
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Transaction deleted"),
+                                    ),
+                                  );
+                                }
+                                },
                                 ),
                               ],
                             ),

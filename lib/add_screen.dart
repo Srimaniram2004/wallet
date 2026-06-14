@@ -4,7 +4,7 @@ import 'app_localization.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
-
+import 'db/db_helper.dart';
   class AddScreen extends StatefulWidget {
     final List<String> categories;
 
@@ -22,6 +22,9 @@ import 'package:file_picker/file_picker.dart';
   }
 
   class _AddScreenState extends State<AddScreen> {
+    String selectedAccount = 'Personal';
+    String? selectedProject;
+   List<String> projects = [];
 
     final controller = TextEditingController();
 
@@ -65,7 +68,64 @@ Future<void> pickImage() async {
     });
   }
 }
+Future<void> pickCamera() async {
+  final picker = ImagePicker();
 
+  final XFile? image =
+      await picker.pickImage(
+    source: ImageSource.camera,
+  );
+
+  if (image != null) {
+    setState(() {
+      attachmentPath = image.path;
+    });
+  }
+}
+
+
+Future<void> showAddProjectDialog() async {
+  final projectController = TextEditingController();
+
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Create Project"),
+        content: TextField(
+          controller: projectController,
+          decoration: const InputDecoration(
+            hintText: "Project Name",
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (projectController.text.trim().isEmpty) {
+                return;
+              }
+
+              await DBHelper.createProject(
+                projectController.text.trim(),
+              );
+
+              await loadProjects();
+
+              if (mounted) {
+                Navigator.pop(context);
+              }
+            },
+            child: const Text("Create"),
+          ),
+        ],
+      );
+    },
+  );
+}
 Future<void> pickFile() async {
   final result =
       await FilePicker.platform.pickFiles();
@@ -110,12 +170,27 @@ void _setCategoryForType(String selectedType) {
       super.initState();
 
       loadCurrency();
+      
+      loadProjects();
 
       if (widget.categories.isNotEmpty) {
         category = null;
         subCategory = null;
   }
     }
+
+
+    Future<void> loadProjects() async {
+  final data = await DBHelper.getProjects();
+
+  setState(() {
+    projects = data.map((e) => e['name'].toString()).toList();
+
+    if (projects.isNotEmpty) {
+      selectedProject = projects.first;
+    }
+  });
+}
 
     //////////////////////////////////////////////////
     // LOAD CURRENCY
@@ -176,6 +251,8 @@ void _loadSubCategory() {
 
       'subCategory': subCategory,
       'attachment' : attachmentPath,
+      'account' : selectedAccount,
+      'project': selectedProject,
     });
   }
 
@@ -365,9 +442,119 @@ void _loadSubCategory() {
                     ),
                   ),
                 ),
+                  const SizedBox(height: 20),
+                Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Account & Project",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal,
+                  ),
+                ),
+              ),
 
                 const SizedBox(height: 20),
 
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: fieldColor,
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
+                      color: Colors.teal.withOpacity(0.3),
+                    ),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: selectedAccount,
+                      isExpanded: true,
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'Personal',
+                          child: Row(
+                            children: [
+                              Icon(Icons.person),
+                              SizedBox(width: 10),
+                              Text('Personal'),
+                            ],
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Business',
+                          child: Row(
+                            children: [
+                              Icon(Icons.business),
+                              SizedBox(width: 10),
+                              Text('Business'),
+                            ],
+                          ),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedAccount = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+                  Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: fieldColor,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: selectedProject,
+                                hint: const Text("Select Project"),
+                                isExpanded: true,
+                                items: projects.map((e) {
+                                  return DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e),
+                                  );
+                                }).toList(),
+                                onChanged: (v) {
+                                  setState(() {
+                                    selectedProject = v;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                         const SizedBox(height: 15),
+                        const SizedBox(width: 10),
+
+                        Container(
+                        decoration: BoxDecoration(
+                          color: Colors.teal,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.add,
+                            color: Colors.white,
+                          ),
+                          onPressed: showAddProjectDialog,
+                        ),
+                      ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
                 //////////////////////////////////////////////////
                 // TYPE SELECTOR
                 //////////////////////////////////////////////////
@@ -480,9 +667,8 @@ void _loadSubCategory() {
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 20),
-
+                const SizedBox(height: 15),
+                
               //category dd
 
                 Container(
@@ -611,19 +797,72 @@ void _loadSubCategory() {
                   ),
                   const SizedBox(height: 15),
 
-                  OutlinedButton.icon(
-                    onPressed: pickImage,
-                    icon: const Icon(Icons.image),
-                    label: const Text("Attach Image"),
+                    Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: fieldColor,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Column(
+              children: [
+                const Text(
+                  "Attachments",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
 
-                  const SizedBox(height: 10),
+                const SizedBox(height: 15),
 
-                  OutlinedButton.icon(
-                    onPressed: pickFile,
-                    icon: const Icon(Icons.attach_file),
-                    label: const Text("Attach File"),
-                  ),
+                Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.spaceEvenly,
+                  children: [
+
+                    GestureDetector(
+                      onTap: pickImage,
+                      child: Column(
+                        children: const [
+                          CircleAvatar(
+                            child: Icon(Icons.image),
+                          ),
+                          SizedBox(height: 5),
+                          Text("Gallery"),
+                        ],
+                      ),
+                    ),
+
+                    GestureDetector(
+                      onTap: pickCamera,
+                      child: Column(
+                        children: const [
+                          CircleAvatar(
+                            child: Icon(Icons.camera_alt),
+                          ),
+                          SizedBox(height: 5),
+                          Text("Camera"),
+                        ],
+                      ),
+                    ),
+
+                    GestureDetector(
+                      onTap: pickFile,
+                      child: Column(
+                        children: const [
+                          CircleAvatar(
+                            child: Icon(Icons.attach_file),
+                          ),
+                          SizedBox(height: 5),
+                          Text("File"),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
 
                   if (attachmentPath != null)
                     Padding(

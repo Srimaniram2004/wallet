@@ -13,7 +13,7 @@ import 'widges/avatar_card.dart';
 import 'services/xp_service.dart';
 import 'services/streak_service.dart';
 // SMS SCREEN
-import 'services/sms_service.dart';
+//import 'services/sms_service.dart';
 
 // VIEW TRANSACTIONS
 import 'all_transactions_screen.dart';
@@ -33,19 +33,25 @@ import 'currency_screen.dart';
 import 'helpers/currency_helper.dart';  
 import 'app_localization.dart';
 import 'language_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
+//import 'screens/login_screen.dart';
+//import 'screens/register_screen.dart';
 
 
-
+  
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
 
   // NOTIFICATIONS INIT
 
-  await NotificationService.init();
-  await NotificationService.scheduleDailyNotifications();
+  //await NotificationService.init();
+  //await NotificationService.scheduleDailyNotifications();
+   try {
+    await NotificationService.init();
+    await NotificationService.scheduleDailyNotifications();
+  } catch (e) {
+    debugPrint("Notification Error: $e");
+  }
 
 
   // SHARED PREFS
@@ -145,133 +151,6 @@ class _SplashRouterState extends State<SplashRouter> {
     );
   }
 }
-// WALLET APP
-
-
-/*class WalletApp extends StatefulWidget {
-  
-  final bool currencySelected;
-
-  const WalletApp({
-    super.key,
-    required this.currencySelected,
-  });
-
-  @override
-  State<WalletApp> createState() =>
-      _WalletAppState();
-}
-class _WalletAppState
-    extends State<WalletApp> {
-
-  //////////////////////////////////////////////////
-  // THEME
-  //////////////////////////////////////////////////
-
-  bool isDark = false;
-
-  //////////////////////////////////////////////////
-  // TOGGLE THEME
-  //////////////////////////////////////////////////
-
-  void toggleTheme() {
-
-    setState(() {
-
-      isDark = !isDark;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return MaterialApp(
-
-      debugShowCheckedModeBanner:
-          false,
-
-      //////////////////////////////////////////////////
-      // ROUTES
-      //////////////////////////////////////////////////
-
-      routes: {
-
-        '/sms': (_) =>
-            const SMSStyledScreen(),
-      },
-
-      //////////////////////////////////////////////////
-      // THEME MODE
-      //////////////////////////////////////////////////
-
-      themeMode:
-          isDark
-              ? ThemeMode.dark
-              : ThemeMode.light,
-
-      //////////////////////////////////////////////////
-      // LIGHT THEME
-      //////////////////////////////////////////////////
-
-      theme: ThemeData(
-
-        brightness: Brightness.light,
-
-        primarySwatch: Colors.teal,
-
-        scaffoldBackgroundColor:
-            const Color(0xFFF4F6FA),
-
-        useMaterial3: true,
-      ),
-
-      //////////////////////////////////////////////////
-      // DARK THEME
-      //////////////////////////////////////////////////
-
-      darkTheme: ThemeData(
-
-        brightness: Brightness.dark,
-
-        primarySwatch: Colors.teal,
-
-        scaffoldBackgroundColor:
-            const Color(0xFF121212),
-
-        cardColor:
-            const Color(0xFF1E1E1E),
-
-        useMaterial3: true,
-      ),
-
-      //////////////////////////////////////////////////
-      // HOME FLOW
-      //////////////////////////////////////////////////
-
-      home: widget.currencySelected
-
-          //////////////////////////////////////////////////
-          // MAIN SCREEN
-          //////////////////////////////////////////////////
-
-          ? MainScreen(
-              isDark: isDark,
-              toggleTheme:
-                  toggleTheme,
-            )
-
-          //////////////////////////////////////////////////
-          // FIRST INSTALL FLOW
-          //////////////////////////////////////////////////
-
-          : QuoteScreen(
-              isDark: isDark,
-              toggleTheme:
-                  toggleTheme,
-            ),
-    );
-  }
-}*/
 
 class WalletApp extends StatefulWidget {
   final bool currencySelected;
@@ -290,16 +169,17 @@ class WalletApp extends StatefulWidget {
 }
 
 class _WalletAppState extends State<WalletApp> {
-  //////////////////////////////////////////////////
-  // THEME
-  //////////////////////////////////////////////////
-  bool isDark = false;
-  bool _isLoggedIn = false;
-  bool _checkingLogin = true;
 
-  //////////////////////////////////////////////////
+
+  // THEME
+
+  bool isDark = false;
+ // bool _isLoggedIn = false;
+ /// bool _checkingLogin = true;
+
+
   // LANGUAGE
-  //////////////////////////////////////////////////
+
   late Locale _locale;
   bool quoteShown = false;
 
@@ -310,7 +190,7 @@ class _WalletAppState extends State<WalletApp> {
   _locale = Locale(widget.initialLanguageCode);
 
   loadQuoteStatus();
-  checkLoginStatus();
+ // checkLoginStatus();
 }
 Future<void> loadQuoteStatus() async {
 
@@ -338,16 +218,7 @@ Future<void> loadQuoteStatus() async {
      // loadData();
   }
 //check login status
-Future<void> checkLoginStatus() async {
-  final prefs = await SharedPreferences.getInstance();
 
-  setState(() {
-    _isLoggedIn =
-        prefs.getBool('isLoggedIn') ?? false;
-
-    _checkingLogin = false;
-  });
-}
 
   //////////////////////////////////////////////////
   // ONBOARDING FLOW CONTROL
@@ -466,21 +337,6 @@ Future<void> checkLoginStatus() async {
   }
 }
 
-
-/*class MainScreen extends StatefulWidget {
-  final bool isDark;
-  final VoidCallback toggleTheme;
-
-  const MainScreen({
-    super.key,
-    required this.isDark,
-    required this.toggleTheme,
-  });
-
-  @override
-  State<MainScreen> createState() =>
-      _MainScreenState();
-}*/
 class MainScreen extends StatefulWidget {
   final bool isDark;
   final VoidCallback toggleTheme;
@@ -505,6 +361,12 @@ class _MainScreenState
     extends State<MainScreen> {
 
   int index = 0;
+  String selectedAccount = 'Personal';
+
+List<String> accounts = [
+  'Personal',
+  'Business',
+];
 
   //////////////////////////////////////////////////
   // CURRENCY SYMBOL
@@ -563,8 +425,7 @@ UserProgress progress = UserProgress(
 Future<void> showProfileMenu() async {
   final prefs = await SharedPreferences.getInstance();
 
-  String username =
-      prefs.getString('username') ?? 'User';
+  String username = selectedAccount;
 
   int xp = prefs.getInt('xp') ?? 0;
   int level = prefs.getInt('level') ?? 1;
@@ -658,50 +519,13 @@ Future<void> showProfileMenu() async {
             // LOGOUT BUTTON
             //////////////////////////////////////////////////
 
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.logout),
-                label: const Text(
-                  "Logout",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+           ElevatedButton.icon(
+                  icon: const Icon(Icons.switch_account),
+                  label: const Text("Close"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(15),
-                  ),
-                ),
-                onPressed: () async {
-                  await prefs.setBool(
-                    'isLoggedIn',
-                    false,
-                  );
-
-                  if (!mounted) return;
-
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => LoginScreen(
-                        isDark: widget.isDark,
-                        toggleTheme:
-                            widget.toggleTheme,
-                        onLocaleChange:
-                            widget.onLocaleChange,
-                      ),
-                    ),
-                    (route) => false,
-                  );
-                },
-              ),
-            ),
 
             const SizedBox(height: 10),
           ],
@@ -711,102 +535,121 @@ Future<void> showProfileMenu() async {
   );
 }
 
+Future<void> onDelete(int id) async {
+  await DBHelper.deleteTransaction(id);
+
+  setState(() {
+    transactions.removeWhere(
+      (item) => item['id'] == id,
+    );
+  });
+}
+
 
 //load  gamification
-/*Future<void> loadGamification() async {
-  final prefs = await SharedPreferences.getInstance();
-
-  print("Loaded XP = ${prefs.getInt('xp')}");
-  print("Loaded Level = ${prefs.getInt('level')}");
-
-  progress = UserProgress(
-    xp: prefs.getInt('xp') ?? 0,
-    level: prefs.getInt('level') ?? 1,
-    stars: prefs.getInt('stars') ?? 0,
-    streak: prefs.getInt('streak') ?? 0,
-    avatar: prefs.getString('avatar') ?? 'assets/avatar1.png',
-    lastLogin: prefs.getString('lastLogin') ?? '',
-  );
-
-  progress = StreakService.updateLoginStreak(progress);
-  progress = XPService.updateAvatar(progress);
-
-  await saveProgress();
-
-  setState(() {});
-}*/
 Future<void> loadGamification() async {
   final prefs = await SharedPreferences.getInstance();
-  final userId = prefs.getInt('userId');
 
-  if (userId == null) return;
-
-  progress = UserProgress(
-    xp: prefs.getInt('xp_$userId') ?? 0,
-    level: prefs.getInt('level_$userId') ?? 1,
-    stars: prefs.getInt('stars_$userId') ?? 0,
-    streak: prefs.getInt('streak_$userId') ?? 0,
-    avatar: prefs.getString('avatar_$userId') ?? 'assets/avatar1.png',
-    lastLogin: prefs.getString('lastLogin_$userId') ?? '',
+  print(
+    "Loaded XP (${selectedAccount}) = "
+    "${prefs.getInt('${selectedAccount}_xp')}",
   );
 
-  progress = StreakService.updateLoginStreak(progress);
-  progress = XPService.updateAvatar(progress);
+  print(
+    "Loaded Level (${selectedAccount}) = "
+    "${prefs.getInt('${selectedAccount}_level')}",
+  );
+
+  progress = UserProgress(
+    xp: prefs.getInt('${selectedAccount}_xp') ?? 0,
+
+    level:
+        prefs.getInt('${selectedAccount}_level') ?? 1,
+
+    stars:
+        prefs.getInt('${selectedAccount}_stars') ?? 0,
+
+    streak:
+        prefs.getInt('${selectedAccount}_streak') ?? 0,
+
+    avatar: prefs.getString(
+          '${selectedAccount}_avatar',
+        ) ??
+        'assets/avatar1.png',
+
+    lastLogin: prefs.getString(
+          '${selectedAccount}_lastLogin',
+        ) ??
+        '',
+  );
+
+  progress = StreakService.updateLoginStreak(
+    progress,
+  );
+
+  progress = XPService.updateAvatar(
+    progress,
+  );
 
   await saveProgress();
+
   setState(() {});
 }
-/*Future<void> saveProgress() async {
 
+
+Future<void> saveProgress() async {
   final prefs =
       await SharedPreferences.getInstance();
 
   await prefs.setInt(
-      'xp', progress.xp);
+    '${selectedAccount}_xp',
+    progress.xp,
+  );
 
   await prefs.setInt(
-      'level', progress.level);
+    '${selectedAccount}_level',
+    progress.level,
+  );
 
   await prefs.setInt(
-      'stars', progress.stars);
+    '${selectedAccount}_stars',
+    progress.stars,
+  );
 
   await prefs.setInt(
-      'streak', progress.streak);
+    '${selectedAccount}_streak',
+    progress.streak,
+  );
 
   await prefs.setString(
-      'avatar', progress.avatar);
+    '${selectedAccount}_avatar',
+    progress.avatar,
+  );
 
   await prefs.setString(
-      'lastLogin',
-      progress.lastLogin);
-
-    
-}*/
-Future<void> saveProgress() async {
-  final prefs = await SharedPreferences.getInstance();
-  final userId = prefs.getInt('userId');
-
-  if (userId == null) return;
-
-  await prefs.setInt('xp_$userId', progress.xp);
-  await prefs.setInt('level_$userId', progress.level);
-  await prefs.setInt('stars_$userId', progress.stars);
-  await prefs.setInt('streak_$userId', progress.streak);
-  await prefs.setString('avatar_$userId', progress.avatar);
-  await prefs.setString('lastLogin_$userId', progress.lastLogin);
+    '${selectedAccount}_lastLogin',
+    progress.lastLogin,
+  );
 }
+ 
 
   //load data
   Future<void> loadData() async {
 
-    final tx =
-        await DBHelper.getTransactions();
+  final tx =
+    await DBHelper.getTransactionsByAccount(
+      selectedAccount,
+    );
 
-    final cat =
-        await DBHelper.getCategories();
+final cat =
+    await DBHelper.getCategories(
+      selectedAccount,
+    );
 
-    final sub =
-        await DBHelper.getSubCategories();
+final sub =
+    await DBHelper.getSubCategories(
+      selectedAccount,
+    );
 
     double inc = 0;
     double exp = 0;
@@ -998,12 +841,16 @@ for (var entry in sub.entries) {
   categories: categories,
 
   onAddCategory: (name) async {
-    await DBHelper.insertCategory(name);
+    await DBHelper.insertCategory(
+      selectedAccount,
+      name,
+    );
     await loadData();
   },
 
   onAddSubCategory: (category, sub) async {
     await DBHelper.insertSubCategory(
+      selectedAccount,
       category,
       sub,
     );
@@ -1019,38 +866,46 @@ for (var entry in sub.entries) {
       //////////////////////////////////////////////////
 
       appBar: AppBar(
+  title: DropdownButtonHideUnderline(
+    child: DropdownButton<String>(
+      value: selectedAccount,
+      items: accounts.map((account) {
+        return DropdownMenuItem(
+          value: account,
+          child: Text(account),
+        );
+      }).toList(),
+      onChanged: (value) async {
+      setState(() {
+        selectedAccount = value!;
+      });
 
-        title:  Text(AppLocalizations.of(context).tr('my_wallet')),
+      await loadData();
+      await loadGamification();
+    },
+    ),
+  ),
 
-        actions: [
-
-          IconButton(
-
-            icon: Icon(
-              Theme.of(context)
-                          .brightness ==
-                      Brightness.dark
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
-            ),
-
-            onPressed:
-               widget.toggleTheme,
-          ),
-        
-   
-        IconButton(
-          icon: const CircleAvatar(
-            radius: 14,
-            child: Icon(
-              Icons.person,
-              size: 18,
-            ),
-          ),
-          onPressed: showProfileMenu,
-        ),
-        ],
+  actions: [
+    IconButton(
+      icon: Icon(
+        Theme.of(context).brightness ==
+                Brightness.dark
+            ? Icons.light_mode
+            : Icons.dark_mode,
       ),
+      onPressed: widget.toggleTheme,
+    ),
+
+    IconButton(
+      icon: const CircleAvatar(
+        radius: 14,
+        child: Icon(Icons.person, size: 18),
+      ),
+      onPressed: showProfileMenu,
+    ),
+  ],
+),
 
       //////////////////////////////////////////////////
       // BODY
@@ -1123,6 +978,8 @@ for (var entry in sub.entries) {
                       res['category'],
                       res['subCategory'] ?? "", // FIXED
                       res['attachment'],
+                      res['account'],
+                       res['project'] ?? "",
                     );
 
                     setState(() {
@@ -1394,23 +1251,17 @@ class HomeDashboard extends StatelessWidget {
                   ),
 
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              AllTransactionsScreen(
-                            transactions:
-                                transactions,
-
-                            onDelete:
-                                onDelete,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AllTransactionsScreen(
+                              transactions: transactions,
+                              onDelete: onDelete,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-
+                        );
+                      },
                     child:  Text(
                        AppLocalizations.of(context)
                       .translate('view_all'),

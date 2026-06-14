@@ -987,12 +987,15 @@ class _ChartScreenState extends State<ChartScreen> {
 
   List<Map<String, dynamic>> transactions = [];
   String currencySymbol = "₹";
+  String selectedProject = "All Projects";
+ List<String> projects = ["All Projects"];
 
   @override
   void initState() {
     super.initState();
     loadCurrency();
-    loadData();
+    transactions = widget.transactions;
+     loadProjects();
   }
 
   Future<void> loadCurrency() async {
@@ -1001,14 +1004,27 @@ class _ChartScreenState extends State<ChartScreen> {
       currencySymbol = prefs.getString('currency') ?? "₹";
     });
   }
+Future<void> loadProjects() async {
+  final data = await DBHelper.getProjects();
 
-  Future<void> loadData() async {
-    final data = await DBHelper.getTransactions();
-    setState(() {
-      transactions = data;
-    });
+  setState(() {
+    projects = [
+      "All Projects",
+      ...data.map((e) => e['name'].toString()),
+    ];
+  });
+}
+
+List<Map<String, dynamic>> get filteredTransactions {
+  if (selectedProject == "All Projects") {
+    return transactions;
   }
 
+  return transactions.where((tx) {
+    return tx['project'] == selectedProject;
+  }).toList();
+}
+  
   //////////////////////////////////////////////////
   // SAFE DATE PARSE
   //////////////////////////////////////////////////
@@ -1026,7 +1042,7 @@ class _ChartScreenState extends State<ChartScreen> {
   //////////////////////////////////////////////////
 
   double getIncome() {
-    return transactions
+    return filteredTransactions
         .where((t) => t['type'] == "Income")
         .fold(0.0, (sum, t) => sum + (t['amount'] ?? 0));
   }
@@ -1036,7 +1052,7 @@ class _ChartScreenState extends State<ChartScreen> {
   //////////////////////////////////////////////////
 
   double getExpense() {
-    return transactions
+    return filteredTransactions
         .where((t) => t['type'] == "Expense")
         .fold(0.0, (sum, t) => sum + (t['amount'] ?? 0));
   }
@@ -1048,7 +1064,7 @@ class _ChartScreenState extends State<ChartScreen> {
   Map<String, double> getCategoryData() {
     Map<String, double> data = {};
 
-    for (var tx in transactions) {
+    for (var tx in filteredTransactions){
       if (tx['type'] == "Expense") {
         String category = tx['category'] ?? "Others";
         data[category] =
@@ -1065,7 +1081,7 @@ class _ChartScreenState extends State<ChartScreen> {
   Map<String, double> getMonthlyExpense() {
     Map<String, double> data = {};
 
-    for (var tx in transactions) {
+    for (var tx in filteredTransactions){
       if (tx['type'] == "Expense") {
         DateTime date = parseDate(tx['date']);
         String key = DateFormat('MMM').format(date);
@@ -1083,7 +1099,7 @@ class _ChartScreenState extends State<ChartScreen> {
   Map<String, double> getDailyExpense() {
     Map<String, double> data = {};
 
-    for (var tx in transactions) {
+    for (var tx in filteredTransactions) {
       if (tx['type'] == "Expense") {
         DateTime date = parseDate(tx['date']);
         String key = DateFormat('dd MMM').format(date);
@@ -1139,7 +1155,10 @@ class _ChartScreenState extends State<ChartScreen> {
             icon: const Icon(Icons.refresh),
             onPressed: () async {
               await loadCurrency();
-              await loadData();
+
+              setState(() {
+                transactions = widget.transactions;
+              });
             },
           ),
         ],
@@ -1154,6 +1173,32 @@ class _ChartScreenState extends State<ChartScreen> {
                   //////////////////////////////////////////////////
                   // HEADER
                   //////////////////////////////////////////////////
+                  const SizedBox(height: 20),
+
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.grey.shade200,
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: selectedProject,
+                                isExpanded: true,
+                                items: projects.map((project) {
+                                  return DropdownMenuItem(
+                                    value: project,
+                                    child: Text(project),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedProject = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
 
                   Container(
                     width: double.infinity,
@@ -1221,30 +1266,76 @@ class _ChartScreenState extends State<ChartScreen> {
                   const SizedBox(height: 10),
 
                   _glassContainer(
-                    child: pieData.isEmpty
-                        ? Center(child: Text(t.translate("no_data")))
-                        : PieChart(
-                            PieChartData(
-                              centerSpaceRadius: 45,
-                              sections: List.generate(
-                                pieData.length,
-                                (i) {
-                                  final e = pieData.entries.toList()[i];
-                                  double total = pieData.values
-                                      .fold(0, (a, b) => a + b);
+  child: pieData.isEmpty
+      ? Center(
+          child: Text(
+            t.translate("no_data"),
+          ),
+        )
+      : Column(
+          children: [
 
-                                  return PieChartSectionData(
-                                    value: e.value,
-                                    title:
-                                        "${(e.value / total * 100).toStringAsFixed(1)}%",
-                                    color: colors[i % colors.length],
-                                    radius: 90,
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
+            Expanded(
+              child: PieChart(
+                PieChartData(
+                  centerSpaceRadius: 45,
+                  sections: List.generate(
+                    pieData.length,
+                    (i) {
+                      final e =
+                          pieData.entries.toList()[i];
+
+                      double total =
+                          pieData.values.fold(
+                        0,
+                        (a, b) => a + b,
+                      );
+
+                      return PieChartSectionData(
+                        value: e.value,
+                        title:
+                            "${(e.value / total * 100).toStringAsFixed(1)}%",
+                        color:
+                            colors[i % colors.length],
+                        radius: 90,
+                      );
+                    },
                   ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: pieData.entries
+                  .toList()
+                  .asMap()
+                  .entries
+                  .map((entry) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 12,
+                      height: 12,
+                      color: colors[
+                          entry.key %
+                              colors.length],
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      "${entry.value.key} - $currencySymbol${entry.value.value.toStringAsFixed(0)}",
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+),
 
                   const SizedBox(height: 25),
 
@@ -1350,33 +1441,87 @@ class _ChartScreenState extends State<ChartScreen> {
       children: [
         _sectionTitle(title, textColor),
         const SizedBox(height: 10),
-        Container(
-          height: 260,
-          padding: const EdgeInsets.all(12),
-          child: data.isEmpty
-              ? Center(child: Text("No data", style: TextStyle(color: subText)))
-              : BarChart(
-                  BarChartData(
-                    maxY: maxY + (maxY * 0.2),
-                    barGroups: data.entries
-                        .toList()
-                        .asMap()
-                        .entries
-                        .map((e) {
-                      return BarChartGroupData(
-                        x: e.key,
-                        barRods: [
-                          BarChartRodData(
-                            toY: e.value.value,
-                            width: 14,
-                            color: Colors.teal,
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+          Container(
+  height: 260,
+  padding: const EdgeInsets.all(12),
+  child: data.isEmpty
+      ? Center(
+          child: Text(
+            "No data",
+            style: TextStyle(color: subText),
+          ),
+        )
+      : BarChart(
+          BarChartData(
+            maxY: maxY + (maxY * 0.2),
+
+            titlesData: FlTitlesData(
+              leftTitles: const AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 40,
                 ),
+              ),
+
+              rightTitles: const AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: false,
+                ),
+              ),
+
+              topTitles: const AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: false,
+                ),
+              ),
+
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 35,
+                  getTitlesWidget: (value, meta) {
+                    final keys = data.keys.toList();
+
+                    if (value.toInt() >= 0 &&
+                        value.toInt() < keys.length) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          keys[value.toInt()],
+                          style: const TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                      );
+                    }
+
+                    return const SizedBox();
+                  },
+                ),
+              ),
+            ),
+
+            barGroups: data.entries
+                .toList()
+                .asMap()
+                .entries
+                .map((e) {
+              return BarChartGroupData(
+                x: e.key,
+                barRods: [
+                  BarChartRodData(
+                    toY: e.value.value,
+                    width: 14,
+                    color: Colors.teal,
+                    borderRadius:
+                        BorderRadius.circular(6),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
         ),
+),
       ],
     );
   }
