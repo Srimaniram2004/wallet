@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'currency_screen.dart';
+import 'main.dart';
 
 class LanguageScreen extends StatelessWidget {
 
@@ -29,35 +30,21 @@ class LanguageScreen extends StatelessWidget {
 
     final prefs = await SharedPreferences.getInstance();
 
-    //////////////////////////////////////////////////
-    // SAVE LANGUAGE
-    //////////////////////////////////////////////////
 
     await prefs.setString(
       'languageCode',
       languageCode,
     );
 
-    //////////////////////////////////////////////////
-    // MARK LANGUAGE SELECTED
-    //////////////////////////////////////////////////
-
     await prefs.setBool(
       'languageSelected',
       true,
     );
 
-    //////////////////////////////////////////////////
-    // CHANGE LANGUAGE INSTANTLY
-    //////////////////////////////////////////////////
-
     onLanguageChanged(
       Locale(languageCode),
     );
-
-    //////////////////////////////////////////////////
-    // NAVIGATE TO CURRENCY SCREEN
-    //////////////////////////////////////////////////
+    
 
     Navigator.pushReplacement(
       context,

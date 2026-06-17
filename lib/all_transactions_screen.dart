@@ -80,9 +80,16 @@ class _AllTransactionsScreenState
               ? const Color(0xFF121212)
               : const Color(0xFFF5F6FA),
 
-      appBar: AppBar(
-        title: const Text("All Transactions"),
+     appBar: AppBar(
+        elevation: 0,
         centerTitle: true,
+        title: const Text(
+          "Transactions",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+          ),
+        ),
       ),
 
       body: sortedTransactions.isEmpty
@@ -98,87 +105,7 @@ class _AllTransactionsScreenState
           : Column(
               children: [
 
-                //////////////////////////////////////////////////////
-                // HEADER CARD
-                //////////////////////////////////////////////////////
-
-                Container(
-                  width: double.infinity,
-
-                  margin: const EdgeInsets.all(16),
-
-                  padding: const EdgeInsets.all(20),
-
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFF0F2027),
-                        Color(0xFF2C5364),
-                      ],
-                    ),
-
-                    borderRadius:
-                        BorderRadius.circular(20),
-
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            Colors.black.withOpacity(0.3),
-
-                        blurRadius: 10,
-                      )
-                    ],
-                  ),
-
-                  child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
-
-                    children: [
-
-                      const Text(
-                        "Total Balance",
-
-                        style: TextStyle(
-                          color: Colors.white70,
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      Text(
-                        "₹ ${balance.toStringAsFixed(0)}",
-
-                        style: const TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      const SizedBox(height: 18),
-
-                      Row(
-                        children: [
-
-                          _miniCard(
-                            "Income",
-                            income,
-                            Colors.green,
-                          ),
-
-                          const SizedBox(width: 10),
-
-                          _miniCard(
-                            "Expense",
-                            expense,
-                            Colors.red,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+             
 
                 //////////////////////////////////////////////////////
                 // TRANSACTION LIST
@@ -212,30 +139,24 @@ class _AllTransactionsScreenState
                         padding:
                             const EdgeInsets.all(14),
 
-                        decoration: BoxDecoration(
-
+                       decoration: BoxDecoration(
                           color: isDark
-                              ? const Color(
-                                  0xFF1E1E1E)
+                              ? const Color(0xFF1E1E1E)
                               : Colors.white,
-
-                          borderRadius:
-                              BorderRadius.circular(
-                                  18),
-
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white10
+                                : Colors.grey.shade200,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black
-                                  .withOpacity(0.05),
-
-                              blurRadius: 6,
-
-                              offset:
-                                  const Offset(0, 4),
-                            )
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
                           ],
                         ),
-
                         child: Row(
                           children: [
 
@@ -245,7 +166,7 @@ class _AllTransactionsScreenState
 
                             CircleAvatar(
 
-                              radius: 22,
+                              radius: 26,
 
                               backgroundColor:
                                   isIncome
@@ -578,7 +499,10 @@ class _AllTransactionsScreenState
   ) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(12),
+       padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
 
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.1),

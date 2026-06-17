@@ -9,7 +9,7 @@ import 'currency_screen.dart';
 import 'main.dart';
 import 'app_localization.dart';
   
-
+import 'profile_selection_screen.dart';
 class QuoteScreen extends StatefulWidget {
   final bool isDark;
   final VoidCallback toggleTheme;
@@ -85,17 +85,17 @@ class _QuoteScreenState
 
       //final prefs = await SharedPreferences.getInstance();
 
-           if (currencySelected) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MainScreen(
-                  isDark: widget.isDark,
-                  toggleTheme: widget.toggleTheme,
-                ),
-              ),
-            );
-          }
+          if (currencySelected) {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (_) => ProfileSelectionScreen(
+        isDark: widget.isDark,
+        toggleTheme: widget.toggleTheme,
+      ),
+    ),
+  );
+}
         //////////////////////////////////////////////////
 
         else {

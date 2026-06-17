@@ -201,6 +201,31 @@ class AppLocalizations {
 'username_exists': 'Username already exists',
 'confirm_password': 'Confirm Password',
 'already_have_account': 'Already have an account? Login',
+"sub_category_expenses": "Sub Category Expenses",
+  //"settings": "Settings",
+  "language": "Language",
+  //"currency": "Currency",
+  "manage_profiles": "Manage Profiles",
+  "manage_profiles_desc": "Switch profile, create project, delete project",
+  //"reports": "Reports",
+  //"categories": "Categories",
+  //"dark_mode": "Dark Mode"
+  
+  "choose_profile": "Choose Profile",
+  "choose_workspace": "Choose your workspace",
+  "personal": "Personal",
+  "manage_personal_expenses": "Manage personal expenses",
+  "business": "Business",
+  "track_business_finances": "Track business finances",
+  "projects": "Projects",
+  "no_projects_created": "No Projects Created",
+  "create_project": "Create Project",
+  "enter_project_name": "Enter Project Name",
+  "project_already_exists": "Project already exists",
+  //"cancel": "Cancel",
+  "create": "Create"
+
+
 
 
     },
@@ -374,6 +399,23 @@ class AppLocalizations {
 'username_exists': 'பயனர் பெயர் ஏற்கனவே உள்ளது',
 'confirm_password': 'கடவுச்சொல்லை உறுதிப்படுத்தவும்',
 'already_have_account': 'ஏற்கனவே கணக்கு உள்ளதா? உள்நுழையவும்',
+"sub_category_expenses": "துணைப்பிரிவு செலவுகள்",
+"language": "மொழி",
+"manage_profiles": "சுயவிவரங்களை நிர்வகி",
+"manage_profiles_desc": "சுயவிவரத்தை மாற்றவும், திட்டத்தை உருவாக்கவும், திட்டத்தை நீக்கவும்",
+"choose_profile": "சுயவிவரத்தை தேர்ந்தெடுக்கவும்",
+  "choose_workspace": "உங்கள் பணியிடத்தை தேர்ந்தெடுக்கவும்",
+  "personal": "தனிப்பட்டது",
+  "manage_personal_expenses": "தனிப்பட்ட செலவுகளை நிர்வகிக்கவும்",
+  "business": "வணிகம்",
+  "track_business_finances": "வணிக நிதிகளை கண்காணிக்கவும்",
+  "projects": "திட்டங்கள்",
+  "no_projects_created": "திட்டங்கள் எதுவும் உருவாக்கப்படவில்லை",
+  "create_project": "திட்டம் உருவாக்கு",
+  "enter_project_name": "திட்டத்தின் பெயரை உள்ளிடவும்",
+  "project_already_exists": "திட்டம் ஏற்கனவே உள்ளது",
+  //"cancel": "ரத்து செய்",
+  "create": "உருவாக்கு"
     },
 
     //////////////////////////////////////////////////
@@ -541,7 +583,25 @@ class AppLocalizations {
 'username_exists': 'उपयोगकर्ता नाम पहले से मौजूद है',
 'confirm_password': 'पासवर्ड की पुष्टि करें',
 'already_have_account': 'पहले से खाता है? लॉगिन करें',
-    },
+"sub_category_expenses": "उप-श्रेणी खर्च",
+"language": "भाषा",
+"manage_profiles": "प्रोफाइल प्रबंधन",
+"manage_profiles_desc": "प्रोफ़ाइल बदलें, प्रोजेक्ट बनाएं, प्रोजेक्ट हटाएं",
+
+  "choose_profile": "प्रोफ़ाइल चुनें",
+  "choose_workspace": "अपना कार्यक्षेत्र चुनें",
+  "personal": "व्यक्तिगत",
+  "manage_personal_expenses": "व्यक्तिगत खर्चों का प्रबंधन करें",
+  "business": "व्यवसाय",
+  "track_business_finances": "व्यावसायिक वित्त का ट्रैक रखें",
+  "projects": "परियोजनाएँ",
+  "no_projects_created": "कोई परियोजना नहीं बनाई गई",
+  "create_project": "परियोजना बनाएँ",
+  "enter_project_name": "परियोजना का नाम दर्ज करें",
+  "project_already_exists": "परियोजना पहले से मौजूद है",
+  //"cancel": "रद्द करें",
+  "create": "बनाएँ"
+  },
   
           //////////////////////////////////////////////////
           // TELUGU
@@ -704,6 +764,23 @@ class AppLocalizations {
 'username_exists': 'వినియోగదారు పేరు ఇప్పటికే ఉంది',
 'confirm_password': 'పాస్‌వర్డ్‌ను నిర్ధారించండి',
 'already_have_account': 'ఇప్పటికే ఖాతా ఉందా? లాగిన్ చేయండి',
+"sub_category_expenses": "ఉప వర్గ ఖర్చులు",
+"language": "భాష",
+"manage_profiles": "ప్రొఫైల్‌లను నిర్వహించండి",
+"manage_profiles_desc": "ప్రొఫైల్ మార్చండి, ప్రాజెక్ట్ సృష్టించండి, ప్రాజెక్ట్ తొలగించండి",
+"choose_profile": "ప్రొఫైల్‌ను ఎంచుకోండి",
+  "choose_workspace": "మీ వర్క్‌స్పేస్‌ను ఎంచుకోండి",
+  "personal": "వ్యక్తిగత",
+  "manage_personal_expenses": "వ్యక్తిగత ఖర్చులను నిర్వహించండి",
+  "business": "వ్యాపారం",
+  "track_business_finances": "వ్యాపార ఆర్థికాలను ట్రాక్ చేయండి",
+  "projects": "ప్రాజెక్టులు",
+  "no_projects_created": "ప్రాజెక్టులు సృష్టించబడలేదు",
+  "create_project": "ప్రాజెక్ట్ సృష్టించండి",
+  "enter_project_name": "ప్రాజెక్ట్ పేరు నమోదు చేయండి",
+  "project_already_exists": "ప్రాజెక్ట్ ఇప్పటికే ఉంది",
+  //"cancel": "రద్దు",
+  "create": "సృష్టించు"
 
           },
 
@@ -870,6 +947,23 @@ class AppLocalizations {
 'username_exists': 'ഉപയോക്തൃനാമം ഇതിനകം നിലവിലുണ്ട്',
 'confirm_password': 'പാസ്‌വേഡ് സ്ഥിരീകരിക്കുക',
 'already_have_account': 'ഇതിനകം അക്കൗണ്ട് ഉണ്ടോ? ലോഗിൻ ചെയ്യുക',
+"language": "ഭാഷ",
+"manage_profiles": "പ്രൊഫൈലുകൾ നിയന്ത്രിക്കുക",
+"manage_profiles_desc": "പ്രൊഫൈൽ മാറ്റുക, പ്രോജക്റ്റ് സൃഷ്ടിക്കുക, പ്രോജക്റ്റ് ഇല്ലാതാക്കുക",
+"sub_category_expenses": "ഉപവിഭാഗ ചെലവുകൾ",
+"choose_profile": "പ്രൊഫൈൽ തിരഞ്ഞെടുക്കുക",
+  "choose_workspace": "നിങ്ങളുടെ വർക്ക്‌സ്‌പേസ് തിരഞ്ഞെടുക്കുക",
+  "personal": "വ്യക്തിഗതം",
+  "manage_personal_expenses": "വ്യക്തിഗത ചെലവുകൾ നിയന്ത്രിക്കുക",
+  "business": "ബിസിനസ്",
+  "track_business_finances": "ബിസിനസ് സാമ്പത്തികം നിരീക്ഷിക്കുക",
+  "projects": "പ്രോജക്റ്റുകൾ",
+  "no_projects_created": "പ്രോജക്റ്റുകളൊന്നും സൃഷ്ടിച്ചിട്ടില്ല",
+  "create_project": "പ്രോജക്റ്റ് സൃഷ്ടിക്കുക",
+  "enter_project_name": "പ്രോജക്റ്റിന്റെ പേര് നൽകുക",
+  "project_already_exists": "പ്രോജക്റ്റ് ഇതിനകം നിലവിലുണ്ട്",
+  //"cancel": "റദ്ദാക്കുക",
+  "create": "സൃഷ്ടിക്കുക"
           },
 
           //////////////////////////////////////////////////
@@ -1035,6 +1129,23 @@ class AppLocalizations {
 'username_exists': 'ಬಳಕೆದಾರ ಹೆಸರು ಈಗಾಗಲೇ ಇದೆ',
 'confirm_password': 'ಪಾಸ್‌ವರ್ಡ್ ದೃಢೀಕರಿಸಿ',
 'already_have_account': 'ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ? ಲಾಗಿನ್ ಮಾಡಿ',
+"sub_category_expenses": "ಉಪವರ್ಗ ವೆಚ್ಚಗಳು",
+"language": "ಭಾಷೆ",
+"manage_profiles": "ಪ್ರೊಫೈಲ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಿ",
+"manage_profiles_desc": "ಪ್ರೊಫೈಲ್ ಬದಲಿಸಿ, ಯೋಜನೆ ರಚಿಸಿ, ಯೋಜನೆ ಅಳಿಸಿ",
+"choose_profile": "ಪ್ರೊಫೈಲ್ ಆಯ್ಕೆಮಾಡಿ",
+  "choose_workspace": "ನಿಮ್ಮ ಕಾರ್ಯಕ್ಷೇತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  "personal": "ವೈಯಕ್ತಿಕ",
+  "manage_personal_expenses": "ವೈಯಕ್ತಿಕ ವೆಚ್ಚಗಳನ್ನು ನಿರ್ವಹಿಸಿ",
+  "business": "ವ್ಯವಹಾರ",
+  "track_business_finances": "ವ್ಯವಹಾರದ ಹಣಕಾಸುಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
+  "projects": "ಯೋಜನೆಗಳು",
+  "no_projects_created": "ಯಾವುದೇ ಯೋಜನೆಗಳನ್ನು ರಚಿಸಲಾಗಿಲ್ಲ",
+  "create_project": "ಯೋಜನೆ ರಚಿಸಿ",
+  "enter_project_name": "ಯೋಜನೆಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+  "project_already_exists": "ಯೋಜನೆ ಈಗಾಗಲೇ ಅಸ್ತಿತ್ವದಲ್ಲಿದೆ",
+  //"cancel": "ರದ್ದುಮಾಡಿ",
+  "create": "ರಚಿಸಿ"
           },
 
 
@@ -1177,6 +1288,23 @@ class AppLocalizations {
 'username_exists': 'ব্যবহারকারীর নাম ইতিমধ্যে বিদ্যমান',
 'confirm_password': 'পাসওয়ার্ড নিশ্চিত করুন',
 'already_have_account': 'ইতিমধ্যে অ্যাকাউন্ট আছে? লগইন করুন',
+"sub_category_expenses": "উপ-শ্রেণির খরচ",
+"language": "ভাষা",
+"manage_profiles": "প্রোফাইল পরিচালনা",
+"manage_profiles_desc": "প্রোফাইল পরিবর্তন করুন, প্রকল্প তৈরি করুন, প্রকল্প মুছুন",
+"choose_profile": "প্রোফাইল নির্বাচন করুন",
+  "choose_workspace": "আপনার ওয়ার্কস্পেস নির্বাচন করুন",
+  "personal": "ব্যক্তিগত",
+  "manage_personal_expenses": "ব্যক্তিগত খরচ পরিচালনা করুন",
+  "business": "ব্যবসা",
+  "track_business_finances": "ব্যবসার আর্থিক অবস্থা ট্র্যাক করুন",
+  "projects": "প্রকল্পসমূহ",
+  "no_projects_created": "কোনো প্রকল্প তৈরি করা হয়নি",
+  "create_project": "প্রকল্প তৈরি করুন",
+  "enter_project_name": "প্রকল্পের নাম লিখুন",
+  "project_already_exists": "প্রকল্প ইতিমধ্যেই বিদ্যমান",
+  //"cancel": "বাতিল",
+  "create": "তৈরি করুন"
         },
 
         //////////////////////////////////////////////////
@@ -1317,6 +1445,23 @@ class AppLocalizations {
 'username_exists': 'વપરાશકર્તા નામ પહેલેથી જ અસ્તિત્વમાં છે',
 'confirm_password': 'પાસવર્ડની પુષ્ટિ કરો',
 'already_have_account': 'પહેલેથી એકાઉન્ટ છે? લૉગિન કરો',
+"sub_category_expenses": "ઉપશ્રેણી ખર્ચ",
+"language": "ભાષા",
+"manage_profiles": "પ્રોફાઇલ મેનેજ કરો",
+"manage_profiles_desc": "પ્રોફાઇલ બદલો, પ્રોજેક્ટ બનાવો, પ્રોજેક્ટ કાઢી નાખો",
+"choose_profile": "પ્રોફાઇલ પસંદ કરો",
+  "choose_workspace": "તમારું વર્કસ્પેસ પસંદ કરો",
+  "personal": "વ્યક્તિગત",
+  "manage_personal_expenses": "વ્યક્તિગત ખર્ચનું સંચાલન કરો",
+  "business": "વ્યવસાય",
+  "track_business_finances": "વ્યવસાયિક નાણાંનું ટ્રેકિંગ કરો",
+  "projects": "પ્રોજેક્ટ્સ",
+  "no_projects_created": "કોઈ પ્રોજેક્ટ બનાવવામાં આવ્યો નથી",
+  "create_project": "પ્રોજેક્ટ બનાવો",
+  "enter_project_name": "પ્રોજેક્ટનું નામ દાખલ કરો",
+  "project_already_exists": "પ્રોજેક્ટ પહેલેથી અસ્તિત્વમાં છે",
+  //"cancel": "રદ કરો",
+  "create": "બનાવો"
         },
 
         //////////////////////////////////////////////////
@@ -1457,6 +1602,23 @@ class AppLocalizations {
 'username_exists': 'वापरकर्तानाव आधीच अस्तित्वात आहे',
 'confirm_password': 'पासवर्डची पुष्टी करा',
 'already_have_account': 'आधीपासून खाते आहे? लॉगिन करा',
+"sub_category_expenses": "उपश्रेणी खर्च",
+"language": "भाषा",
+"manage_profiles": "प्रोफाइल व्यवस्थापन",
+"manage_profiles_desc": "प्रोफाइल बदला, प्रकल्प तयार करा, प्रकल्प हटवा",
+"choose_profile": "प्रोफाइल निवडा",
+  "choose_workspace": "तुमचे कार्यक्षेत्र निवडा",
+  "personal": "वैयक्तिक",
+  "manage_personal_expenses": "वैयक्तिक खर्च व्यवस्थापित करा",
+  "business": "व्यवसाय",
+  "track_business_finances": "व्यवसाय आर्थिक व्यवहारांचा मागोवा घ्या",
+  "projects": "प्रकल्प",
+  "no_projects_created": "कोणतेही प्रकल्प तयार केलेले नाहीत",
+  "create_project": "प्रकल्प तयार करा",
+  "enter_project_name": "प्रकल्पाचे नाव प्रविष्ट करा",
+  "project_already_exists": "प्रकल्प आधीपासून अस्तित्वात आहे",
+  //"cancel": "रद्द करा",
+  "create": "तयार करा"
 
         },
 
@@ -1600,6 +1762,23 @@ class AppLocalizations {
 'username_exists': 'ਯੂਜ਼ਰਨੇਮ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੈ',
 'confirm_password': 'ਪਾਸਵਰਡ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ',
 'already_have_account': 'ਕੀ ਪਹਿਲਾਂ ਹੀ ਖਾਤਾ ਹੈ? ਲਾਗਇਨ ਕਰੋ',
+"sub_category_expenses": "ਉਪ-ਸ਼੍ਰੇਣੀ ਖਰਚੇ",
+"language": "ਭਾਸ਼ਾ",
+"manage_profiles": "ਪ੍ਰੋਫਾਈਲ ਪ੍ਰਬੰਧਨ",
+"manage_profiles_desc": "ਪ੍ਰੋਫਾਈਲ ਬਦਲੋ, ਪ੍ਰੋਜੈਕਟ ਬਣਾਓ, ਪ੍ਰੋਜੈਕਟ ਮਿਟਾਓ",
+"choose_profile": "ਪ੍ਰੋਫਾਈਲ ਚੁਣੋ",
+  "choose_workspace": "ਆਪਣਾ ਵਰਕਸਪੇਸ ਚੁਣੋ",
+  "personal": "ਨਿੱਜੀ",
+  "manage_personal_expenses": "ਨਿੱਜੀ ਖਰਚੇ ਸੰਭਾਲੋ",
+  "business": "ਕਾਰੋਬਾਰ",
+  "track_business_finances": "ਕਾਰੋਬਾਰੀ ਵਿੱਤ ਦਾ ਰਿਕਾਰਡ ਰੱਖੋ",
+  "projects": "ਪ੍ਰੋਜੈਕਟ",
+  "no_projects_created": "ਕੋਈ ਪ੍ਰੋਜੈਕਟ ਨਹੀਂ ਬਣਾਇਆ ਗਿਆ",
+  "create_project": "ਪ੍ਰੋਜੈਕਟ ਬਣਾਓ",
+  "enter_project_name": "ਪ੍ਰੋਜੈਕਟ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+  "project_already_exists": "ਪ੍ਰੋਜੈਕਟ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੈ",
+  //"cancel": "ਰੱਦ ਕਰੋ",
+  "create": "ਬਣਾਓ"
         },
 
         //////////////////////////////////////////////////
@@ -1739,6 +1918,24 @@ class AppLocalizations {
 'username_exists': 'صارف نام پہلے سے موجود ہے',
 'confirm_password': 'پاس ورڈ کی تصدیق کریں',
 'already_have_account': 'پہلے سے اکاؤنٹ ہے؟ لاگ ان کریں',
+"sub_category_expenses": "ذیلی زمرہ اخراجات",
+"language": "زبان",
+"manage_profiles": "پروفائل مینجمنٹ",
+"manage_profiles_desc": "پروفائل تبدیل کریں، پروجیکٹ بنائیں، پروجیکٹ حذف کریں",
+
+  "choose_profile": "پروفائل منتخب کریں",
+  "choose_workspace": "اپنا ورک اسپیس منتخب کریں",
+  "personal": "ذاتی",
+  "manage_personal_expenses": "ذاتی اخراجات کا انتظام کریں",
+  "business": "کاروبار",
+  "track_business_finances": "کاروباری مالیات کا ریکارڈ رکھیں",
+  "projects": "پروجیکٹس",
+  "no_projects_created": "کوئی پروجیکٹ نہیں بنایا گیا",
+  "create_project": "پروجیکٹ بنائیں",
+  "enter_project_name": "پروجیکٹ کا نام درج کریں",
+  "project_already_exists": "پروجیکٹ پہلے سے موجود ہے",
+  //"cancel": "منسوخ کریں",
+  "create": "بنائیں"
         },
 
         //////////////////////////////////////////////////
@@ -1880,6 +2077,24 @@ class AppLocalizations {
 'username_exists': 'ଉପଯୋଗକର୍ତ୍ତା ନାମ ପୂର୍ବରୁ ଅଛି',
 'confirm_password': 'ପାସୱାର୍ଡ ନିଶ୍ଚିତ କରନ୍ତୁ',
 'already_have_account': 'ପୂର୍ବରୁ ଖାତା ଅଛି କି? ଲଗଇନ କରନ୍ତୁ',
+"sub_category_expenses": "ଉପ-ଶ୍ରେଣୀ ଖର୍ଚ୍ଚ",
+"language": "ଭାଷା",
+"manage_profiles": "ପ୍ରୋଫାଇଲ୍ ପରିଚାଳନା",
+"manage_profiles_desc": "ପ୍ରୋଫାଇଲ୍ ବଦଳାନ୍ତୁ, ପ୍ରୋଜେକ୍ଟ ସୃଷ୍ଟି କରନ୍ତୁ, ପ୍ରୋଜେକ୍ଟ ବିଲୋପ କରନ୍ତୁ",
+  "choose_profile": "ପ୍ରୋଫାଇଲ୍ ବାଛନ୍ତୁ",
+  "choose_workspace": "ଆପଣଙ୍କର କାର୍ଯ୍ୟକ୍ଷେତ୍ର ବାଛନ୍ତୁ",
+  "personal": "ବ୍ୟକ୍ତିଗତ",
+  "manage_personal_expenses": "ବ୍ୟକ୍ତିଗତ ଖର୍ଚ୍ଚ ପରିଚାଳନା କରନ୍ତୁ",
+  "business": "ବ୍ୟବସାୟ",
+  "track_business_finances": "ବ୍ୟବସାୟିକ ଆର୍ଥିକତାକୁ ଟ୍ରାକ୍ କରନ୍ତୁ",
+  "projects": "ପ୍ରକଳ୍ପଗୁଡ଼ିକ",
+  "no_projects_created": "କୌଣସି ପ୍ରକଳ୍ପ ସୃଷ୍ଟି ହୋଇନାହିଁ",
+  "create_project": "ପ୍ରକଳ୍ପ ସୃଷ୍ଟି କରନ୍ତୁ",
+  "enter_project_name": "ପ୍ରକଳ୍ପର ନାମ ପ୍ରବେଶ କରନ୍ତୁ",
+  "project_already_exists": "ପ୍ରକଳ୍ପ ପୂର୍ବରୁ ଅବସ୍ଥିତ",
+  //"cancel": "ବାତିଲ୍",
+  "create": "ସୃଷ୍ଟି କରନ୍ତୁ"
+
         },
       };
   //////////////////////////////////////////////////
@@ -1910,8 +2125,7 @@ class AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) {
-
-    return [
+    return const [
       'en',
       'ta',
       'hi',
@@ -1928,10 +2142,7 @@ class AppLocalizationsDelegate
   }
 
   @override
-  Future<AppLocalizations> load(
-    Locale locale,
-  ) async {
-
+  Future<AppLocalizations> load(Locale locale) async {
     return AppLocalizations(locale);
   }
 
@@ -1939,6 +2150,16 @@ class AppLocalizationsDelegate
   bool shouldReload(
     covariant LocalizationsDelegate<AppLocalizations> old,
   ) {
-    return false;
+    return false; 
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other);
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  Type get type => AppLocalizations;
 }

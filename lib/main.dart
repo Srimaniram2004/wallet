@@ -10,8 +10,8 @@ import 'report_screen.dart';
 
 import 'models/user_progress.dart';
 import 'widges/avatar_card.dart';
-import 'services/xp_service.dart';
-import 'services/streak_service.dart';
+//mport 'services/xp_service.dart';
+//import 'services/streak_service.dart';
 // SMS SCREEN
 //import 'services/sms_service.dart';
 
@@ -35,6 +35,8 @@ import 'app_localization.dart';
 import 'language_screen.dart';
 //import 'screens/login_screen.dart';
 //import 'screens/register_screen.dart';
+
+import 'profile_selection_screen.dart';
 
 
   
@@ -66,6 +68,11 @@ void main() async {
 
   final currencySelected = prefs.getBool('currencySelected') ?? false;
   final savedLanguage = prefs.getString('languageCode') ?? 'en';
+  final profileSelected =
+    prefs.getBool('profileSelected') ?? false;
+
+final selectedProfile =
+    prefs.getString('selectedProfile') ?? 'Personal';
   
   // TEST NOTIFICATION (optional)
 
@@ -79,6 +86,9 @@ void main() async {
       currencySelected: currencySelected,
       languageSelected: languageSelected,
       initialLanguageCode: savedLanguage,
+      //initialLanguageCode: savedLanguage,
+      profileSelected: profileSelected,
+      selectedProfile: selectedProfile,
     ),
   );
 }
@@ -87,6 +97,7 @@ class SplashRouter extends StatefulWidget {
   final bool isDark;
   final VoidCallback toggleTheme;
   final Function(Locale) setLocale;
+  
 
   const SplashRouter({
     super.key,
@@ -107,6 +118,7 @@ class _SplashRouterState extends State<SplashRouter> {
   void initState() {
     super.initState();
     load();
+   
   }
 
   Future<void> load() async {
@@ -156,12 +168,16 @@ class WalletApp extends StatefulWidget {
   final bool currencySelected;
   final bool languageSelected;
   final String initialLanguageCode;
+  final bool profileSelected;
+  final String selectedProfile;
 
   const WalletApp({
     super.key,
     required this.currencySelected,
     required this.languageSelected,
     required this.initialLanguageCode,
+    required this.profileSelected,
+    required this.selectedProfile,
   });
 
   @override
@@ -176,7 +192,8 @@ class _WalletAppState extends State<WalletApp> {
   bool isDark = false;
  // bool _isLoggedIn = false;
  /// bool _checkingLogin = true;
-
+ /// 
+  bool profileSelectedThisSession = false;
 
   // LANGUAGE
 
@@ -211,6 +228,7 @@ Future<void> loadQuoteStatus() async {
   }
 
   void setLocale(Locale locale) {
+    
     setState(() {
       _locale = locale;
       
@@ -233,46 +251,36 @@ Future<void> loadQuoteStatus() async {
 
     Widget homeScreen;
 
-    // FLOW 1: LANGUAGE
-   
-    if (!_languageDone) {
-        homeScreen = LanguageScreen(
-        isDark: isDark,
-        toggleTheme: toggleTheme,
-        onLanguageChanged: (Locale locale) {
-          setLocale(locale);
-        },
-      );
-    }
-
-
-    // FLOW 2: CURRENCY
-  
-    else if (!_currencyDone) {
-      homeScreen = CurrencyScreen(
-        isDark: isDark,
-        toggleTheme: toggleTheme,
-        );
-    }
-    //qoutescreen
-    else if (!quoteShown) {
-        homeScreen = QuoteScreen(
-          isDark: isDark,
-          toggleTheme: toggleTheme,
-        );
-      }
-
-    
-    // FLOW 3: MAIN APP
-
-    else {
-      homeScreen = MainScreen(
-        isDark: isDark,
-        toggleTheme: toggleTheme,
-      );
-    }
-
+if (!_languageDone) {
+  homeScreen = LanguageScreen(
+    isDark: isDark,
+    toggleTheme: toggleTheme,
+    onLanguageChanged: (Locale locale) {
+      setLocale(locale);
+    },
+  );
+}
+else if (!_currencyDone) {
+  homeScreen = CurrencyScreen(
+    isDark: isDark,
+    toggleTheme: toggleTheme,
+  );
+}
+else if (!quoteShown) {
+  homeScreen = QuoteScreen(
+    isDark: isDark,
+    toggleTheme: toggleTheme,
+  );
+}
+else {
+  homeScreen = ProfileSelectionScreen(
+    isDark: isDark,
+    toggleTheme: toggleTheme,
+  );
+}
     return MaterialApp(
+      key: ValueKey(_locale.languageCode),
+      locale: _locale,
       debugShowCheckedModeBanner: false,
 
       
@@ -299,7 +307,7 @@ Future<void> loadQuoteStatus() async {
         Locale('or'),
       ],
 
-      locale: _locale,
+      
 
       localeResolutionCallback: (locale, supportedLocales) {
         if (locale == null) return supportedLocales.first;
@@ -361,12 +369,10 @@ class _MainScreenState
     extends State<MainScreen> {
 
   int index = 0;
-  String selectedAccount = 'Personal';
+  String selectedAccount = '';
+  String selectedProfile = "Personal";
 
-List<String> accounts = [
-  'Personal',
-  'Business',
-];
+
 
   //////////////////////////////////////////////////
   // CURRENCY SYMBOL
@@ -386,21 +392,15 @@ List<String> accounts = [
   double yearlyExpense = 0;
   double totalExpense = 0;
 
-UserProgress progress = UserProgress(
-  xp: 0,
-  level: 1,
-  stars: 0,
-  streak: 0,
-  avatar: 'assets/avatar1.png',
-  lastLogin: '',
-);
+
   @override
   void initState() {
     super.initState();
 
     loadCurrency();
-    loadData();
-    loadGamification();
+   // loadData();
+    loadSelectedProfile();
+    //loadGamification();
 
   //checkLoginStatus();
   }
@@ -422,14 +422,221 @@ UserProgress progress = UserProgress(
     });
   }
 
-Future<void> showProfileMenu() async {
-  final prefs = await SharedPreferences.getInstance();
 
+Future<void> loadSelectedProfile() async {
+  final prefs =
+      await SharedPreferences.getInstance();
+
+  selectedAccount =
+      prefs.getString('selectedProfile') ??
+      'Personal';
+
+  await loadData();
+  //await loadGamification();
+  if (mounted) {
+    setState(() {});
+  }
+}
+Future<void> showProfileMenu() async {
   String username = selectedAccount;
 
-  int xp = prefs.getInt('xp') ?? 0;
-  int level = prefs.getInt('level') ?? 1;
-  int stars = prefs.getInt('stars') ?? 0;
+  if (!mounted) return;
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor:
+        Theme.of(context).scaffoldBackgroundColor,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(30),
+      ),
+    ),
+    builder: (context) {
+      return SizedBox(
+        height:
+            MediaQuery.of(context).size.height * 0.95,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              //////////////////////////////////////////////////
+              // DRAG HANDLE
+              //////////////////////////////////////////////////
+
+              Container(
+                width: 50,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius:
+                      BorderRadius.circular(10),
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              //////////////////////////////////////////////////
+              // PROFILE IMAGE
+              //////////////////////////////////////////////////
+
+              CircleAvatar(
+                radius: 60,
+                backgroundColor:
+                    Colors.teal.withOpacity(0.15),
+                child: const Icon(
+                  Icons.person,
+                  size: 70,
+                  color: Colors.teal,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              //////////////////////////////////////////////////
+              // USERNAME
+              //////////////////////////////////////////////////
+
+             Text(
+                AppLocalizations.of(context).tr(username),
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              Text(
+                "Wallet App Profile",
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 16,
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              //////////////////////////////////////////////////
+              // PROFILE CARD
+              //////////////////////////////////////////////////
+
+              Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15),
+                ),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.account_circle,
+                    color: Colors.teal,
+                  ),
+                  title: const Text("Profile"),
+                  subtitle: Text(username),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              //////////////////////////////////////////////////
+              // ACCOUNT CARD
+              //////////////////////////////////////////////////
+
+              Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15),
+                ),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.folder_shared,
+                    color: Colors.orange,
+                  ),
+                  title: const Text("Current Account"),
+                  subtitle: Text(
+                    AppLocalizations.of(context).tr(selectedAccount),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              //////////////////////////////////////////////////
+              // APP INFO
+              //////////////////////////////////////////////////
+
+              Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15),
+                ),
+                child: const ListTile(
+                  leading: Icon(
+                    Icons.info_outline,
+                    color: Colors.blue,
+                  ),
+                  title: Text("Wallet Winz"),
+                  subtitle:
+                      Text("Personal Finance Manager"),
+                ),
+              ),
+
+              const Spacer(),
+
+              //////////////////////////////////////////////////
+              // CLOSE BUTTON
+              //////////////////////////////////////////////////
+
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.close),
+                  label: const Text(
+                    "Close",
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(15),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+Future<void> onDelete(int id) async {
+  await DBHelper.deleteTransaction(id);
+
+  setState(() {
+    transactions.removeWhere(
+      (item) => item['id'] == id,
+    );
+  });
+}
+Future<void> showProfileSelector() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  List<String> projects =
+      prefs.getStringList('projects') ?? [];
 
   if (!mounted) return;
 
@@ -441,35 +648,15 @@ Future<void> showProfileMenu() async {
         top: Radius.circular(25),
       ),
     ),
-    builder: (context) {
+    builder: (_) {
       return Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            //////////////////////////////////////////////////
-            // PROFILE ICON
-            //////////////////////////////////////////////////
-
-            CircleAvatar(
-              radius: 40,
-              backgroundColor:
-                  Colors.teal.withOpacity(0.15),
-              child: const Icon(
-                Icons.person,
-                size: 45,
-                color: Colors.teal,
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            //////////////////////////////////////////////////
-            // USERNAME
-            //////////////////////////////////////////////////
 
             Text(
-              username,
+              AppLocalizations.of(context).tr('choose_profile'),
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -478,159 +665,86 @@ Future<void> showProfileMenu() async {
 
             const SizedBox(height: 20),
 
-            //////////////////////////////////////////////////
-            // USER INFO
-            //////////////////////////////////////////////////
+          ListTile(
+                leading: const Icon(Icons.person),
+                title: Text(
+                  AppLocalizations.of(context).tr('personal'),
+                ),
+                onTap: () => switchProfile("personal"),
+              ),
 
-            Card(
-              elevation: 2,
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.person),
-                    title: const Text("Username"),
-                    subtitle: Text(username),
-                  ),
+              ListTile(
+                leading: const Icon(Icons.business),
+                title: Text(
+                  AppLocalizations.of(context).tr('business'),
+                ),
+                onTap: () => switchProfile("business"),
+              ),
 
-                  ListTile(
-                    leading: const Icon(Icons.bolt),
-                    title: const Text("XP"),
-                    subtitle: Text("$xp XP"),
-                  ),
-
-                  ListTile(
-                    leading: const Icon(Icons.trending_up),
-                    title: const Text("Level"),
-                    subtitle: Text("Level $level"),
-                  ),
-
-                  ListTile(
-                    leading: const Icon(Icons.star),
-                    title: const Text("Stars"),
-                    subtitle: Text("$stars Stars"),
-                  ),
-                ],
+            ...projects.map(
+              (project) => ListTile(
+                leading: const Icon(Icons.folder),
+                title: Text(project),
+                onTap: () =>
+                    switchProfile(project),
               ),
             ),
 
-            const SizedBox(height: 20),
+            const Divider(),
 
-            //////////////////////////////////////////////////
-            // LOGOUT BUTTON
-            //////////////////////////////////////////////////
+            ListTile(
+              leading: const Icon(Icons.add_circle),
+              title: Text(
+                AppLocalizations.of(context).tr('create_project'),
+              ),
+              onTap: () async {
+                Navigator.pop(context);
 
-           ElevatedButton.icon(
-                  icon: const Icon(Icons.switch_account),
-                  label: const Text("Close"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ProfileSelectionScreen(
+                      isDark: widget.isDark,
+                      toggleTheme: widget.toggleTheme,
+                    ),
+                  ),
+                );
 
-            const SizedBox(height: 10),
+                await loadSelectedProfile();
+              },
+            ),
           ],
         ),
       );
     },
   );
 }
+Future<void> switchProfile(
+  String profile,
+) async {
 
-Future<void> onDelete(int id) async {
-  await DBHelper.deleteTransaction(id);
-
-  setState(() {
-    transactions.removeWhere(
-      (item) => item['id'] == id,
-    );
-  });
-}
-
-
-//load  gamification
-Future<void> loadGamification() async {
-  final prefs = await SharedPreferences.getInstance();
-
-  print(
-    "Loaded XP (${selectedAccount}) = "
-    "${prefs.getInt('${selectedAccount}_xp')}",
-  );
-
-  print(
-    "Loaded Level (${selectedAccount}) = "
-    "${prefs.getInt('${selectedAccount}_level')}",
-  );
-
-  progress = UserProgress(
-    xp: prefs.getInt('${selectedAccount}_xp') ?? 0,
-
-    level:
-        prefs.getInt('${selectedAccount}_level') ?? 1,
-
-    stars:
-        prefs.getInt('${selectedAccount}_stars') ?? 0,
-
-    streak:
-        prefs.getInt('${selectedAccount}_streak') ?? 0,
-
-    avatar: prefs.getString(
-          '${selectedAccount}_avatar',
-        ) ??
-        'assets/avatar1.png',
-
-    lastLogin: prefs.getString(
-          '${selectedAccount}_lastLogin',
-        ) ??
-        '',
-  );
-
-  progress = StreakService.updateLoginStreak(
-    progress,
-  );
-
-  progress = XPService.updateAvatar(
-    progress,
-  );
-
-  await saveProgress();
-
-  setState(() {});
-}
-
-
-Future<void> saveProgress() async {
   final prefs =
       await SharedPreferences.getInstance();
 
-  await prefs.setInt(
-    '${selectedAccount}_xp',
-    progress.xp,
-  );
-
-  await prefs.setInt(
-    '${selectedAccount}_level',
-    progress.level,
-  );
-
-  await prefs.setInt(
-    '${selectedAccount}_stars',
-    progress.stars,
-  );
-
-  await prefs.setInt(
-    '${selectedAccount}_streak',
-    progress.streak,
-  );
-
   await prefs.setString(
-    '${selectedAccount}_avatar',
-    progress.avatar,
+    'selectedProfile',
+    profile,
   );
 
-  await prefs.setString(
-    '${selectedAccount}_lastLogin',
-    progress.lastLogin,
-  );
+  selectedAccount = profile;
+
+  await loadData();
+  //await loadGamification();
+
+  if (mounted) {
+    setState(() {});
+  }
+
+  Navigator.pop(context);
 }
+
+
+
  
 
   //load data
@@ -789,7 +903,7 @@ for (var entry in sub.entries) {
         //////////////////////////////////////////////////
 
         currencySymbol: currencySymbol,
-        progress: progress,
+        //  progress: progress,
       ),
 
       //////////////////////////////////////////////////
@@ -866,26 +980,23 @@ for (var entry in sub.entries) {
       //////////////////////////////////////////////////
 
       appBar: AppBar(
-  title: DropdownButtonHideUnderline(
-    child: DropdownButton<String>(
-      value: selectedAccount,
-      items: accounts.map((account) {
-        return DropdownMenuItem(
-          value: account,
-          child: Text(account),
-        );
-      }).toList(),
-      onChanged: (value) async {
-      setState(() {
-        selectedAccount = value!;
-      });
-
-      await loadData();
-      await loadGamification();
-    },
-    ),
-  ),
-
+         title: GestureDetector(
+          onTap: showProfileSelector,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.folder_shared),
+              const SizedBox(width: 8),
+              Text(
+                  AppLocalizations.of(context).tr(selectedAccount),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              const Icon(Icons.arrow_drop_down),
+            ],
+          ),
+        ),
   actions: [
     IconButton(
       icon: Icon(
@@ -983,12 +1094,10 @@ for (var entry in sub.entries) {
                     );
 
                     setState(() {
-                      progress = XPService.addXP(progress, 15);
-                      progress = XPService.addStars(progress, 2);
-                      progress = XPService.updateProgress(progress);
+                     
                     });
 
-                    await saveProgress();
+           
                     await loadData();
                   }
                 },
@@ -1050,7 +1159,7 @@ class HomeDashboard extends StatelessWidget {
   final double yearlyExpense;
   final double totalExpense;
 
-  final UserProgress progress;
+  //final UserProgress progress;
 
   //////////////////////////////////////////////////
   // CURRENCY SYMBOL
@@ -1074,7 +1183,7 @@ class HomeDashboard extends StatelessWidget {
     required this.yearlyExpense,
     required this.totalExpense,
     required this.currencySymbol,
-    required this.progress,
+    //required this.progress,
   });
 
   @override
@@ -1122,18 +1231,8 @@ class HomeDashboard extends StatelessWidget {
 
               const SizedBox(height: 20),*/
 
-              //////////////////////////////////////////////////
-              // AVATAR CARD
-              //////////////////////////////////////////////////
-
-              AvatarCard(
-             //   height: 100,
-               // width: double.infinity,
-                //color: Colors.teal,
-                progress:progress,
-              ),
-
-              const SizedBox(height: 20),
+             
+          
 
               //////////////////////////////////////////////////
               // EXPENSE CARDS
@@ -1230,52 +1329,54 @@ class HomeDashboard extends StatelessWidget {
               // RECENT TRANSACTIONS
               //////////////////////////////////////////////////
 
-              Row(
-                children: [
-                   Expanded(
-                    child: Text(
-                      AppLocalizations.of(context)
-                         .tr('recent_transactions'),
-
-                      maxLines: 1,
-
-                      overflow:
-                          TextOverflow.ellipsis,
-
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight:
-                            FontWeight.bold,
-                      ),
-                    ),
+             Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 8,
                   ),
-
-                  GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AllTransactionsScreen(
-                              transactions: transactions,
-                              onDelete: onDelete,
-                            ),
-                          ),
-                        );
-                      },
-                    child:  Text(
-                       AppLocalizations.of(context)
-                      .translate('view_all'),
-
-                      style: TextStyle(
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.receipt_long,
                         color: Colors.teal,
-                        fontWeight:
-                            FontWeight.bold,
+                        size: 24,
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)
+                              .tr('recent_transactions'),
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => AllTransactionsScreen(
+                                transactions: transactions,
+                                onDelete: onDelete,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)
+                              .translate('view_all'),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-
+                ),
               const SizedBox(height: 10),
 
               //////////////////////////////////////////////////
@@ -1347,7 +1448,7 @@ class HomeDashboard extends StatelessWidget {
                         //////////////////////////////////////////////////
 
                         CircleAvatar(
-                          radius: 18,
+                          radius: 24,
 
                           backgroundColor:
                               isIncome
@@ -1365,7 +1466,7 @@ class HomeDashboard extends StatelessWidget {
                                 : Icons
                                     .arrow_upward,
 
-                            size: 18,
+                            size: 22,
 
                             color: isIncome
                                 ? Colors.green
@@ -1425,7 +1526,7 @@ class HomeDashboard extends StatelessWidget {
                                     color: Colors
                                         .grey
                                         .shade600,
-                                  ),
+                                  ),  
                                 ),
                             ],
                           ),
@@ -1444,7 +1545,7 @@ class HomeDashboard extends StatelessWidget {
 
                             child: Text(
                               "${isIncome ? "+" : "-"} $currencySymbol${tx['amount']}",
-
+                               
                               maxLines: 1,
 
                               style: TextStyle(
@@ -1459,6 +1560,7 @@ class HomeDashboard extends StatelessWidget {
                             ),
                           ),
                         ),
+                         const SizedBox(width: 24),
 
                         //////////////////////////////////////////////////
                         // DELETE BUTTON

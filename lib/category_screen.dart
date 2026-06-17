@@ -6,12 +6,35 @@ class CategoryScreen extends StatefulWidget {
   final Future<void> Function(String) onAddCategory;
   final Future<void> Function(String, String)
       onAddSubCategory;
+  final Future<void> Function(
+  String oldName,
+  String newName,
+) onEditCategory;
+
+final Future<void> Function(
+  String category,
+) onDeleteCategory;
+
+final Future<void> Function(
+  String category,
+  String oldSub,
+  String newSub,
+) onEditSubCategory;
+
+final Future<void> Function(
+  String category,
+  String subCategory,
+) onDeleteSubCategory;
 
   const CategoryScreen({
     super.key,
     required this.categories,
     required this.onAddCategory,
     required this.onAddSubCategory,
+     required this.onEditCategory,
+    required this.onDeleteCategory,
+    required this.onEditSubCategory,
+    required this.onDeleteSubCategory,
   });
 
   @override
@@ -34,6 +57,7 @@ class _CategoryScreenState
   bool loading = false;
 
   bool _isSeeded = false;
+ 
 
   //////////////////////////////////////////////////
   // DUMMY SUBCATEGORIES
@@ -87,90 +111,204 @@ Future<void> _loadFromDB() async {
     );
   }
 
+
+Future<void> editCategory(String oldName) async {
+  final controller =
+      TextEditingController(text: oldName);
+
+  await showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Edit Category"),
+      content: TextField(
+        controller: controller,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            final newName =
+                controller.text.trim();
+
+            if (newName.isEmpty) return;
+
+            await widget.onEditCategory(
+              oldName,
+              newName,
+            );
+
+            final subs =
+                widget.categories[oldName] ?? [];
+
+            widget.categories.remove(oldName);
+            widget.categories[newName] = subs;
+
+            if (selectedCategory == oldName) {
+              selectedCategory = newName;
+            }
+
+            setState(() {});
+
+            Navigator.pop(context);
+          },
+          child: const Text("Save"),
+        ),
+      ],
+    ),
+  );
+}
+Future<void> deleteCategory(
+  String category,
+) async {
+  await widget.onDeleteCategory(category);
+
+  widget.categories.remove(category);
+
+  if (selectedCategory == category) {
+    selectedCategory = null;
+  }
+
+  setState(() {});
+}
+Future<void> editSubCategory(
+  String category,
+  String oldSub,
+) async {
+  final controller =
+      TextEditingController(text: oldSub);
+
+  await showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text(
+        "Edit Subcategory",
+      ),
+      content: TextField(
+        controller: controller,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () =>
+              Navigator.pop(context),
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            final newSub =
+                controller.text.trim();
+
+            if (newSub.isEmpty) return;
+
+            await widget.onEditSubCategory(
+              category,
+              oldSub,
+              newSub,
+            );
+
+            final index =
+                widget.categories[category]!
+                    .indexOf(oldSub);
+
+            widget.categories[category]![index] =
+                newSub;
+
+            setState(() {});
+
+            Navigator.pop(context);
+          },
+          child: const Text("Save"),
+        ),
+      ],
+    ),
+  );
+}
+Future<void> deleteSubCategory(
+  String category,
+  String sub,
+) async {
+  await widget.onDeleteSubCategory(
+    category,
+    sub,
+  );
+
+  widget.categories[category]!
+      .remove(sub);
+
+  setState(() {});
+}
+
   //////////////////////////////////////////////////
   // ADD CATEGORY
   //////////////////////////////////////////////////
 
-  Future<void> addCategory() async {
+Future<void> addCategory() async {
+  final text = categoryController.text.trim();
 
-    final text =
-        categoryController.text.trim();
+  final tr = AppLocalizations.of(context);
 
-    final tr =
-        AppLocalizations.of(context);
+  if (text.isEmpty) return;
 
-    if (text.isEmpty) return;
-
-    if (widget.categories
-        .containsKey(text)) {
-
-      showMsg(
-          tr.tr('category_exists'));
-
-      return;
-    }
-
-    setState(() => loading = true);
-
-    await widget.onAddCategory(text);
-
-    categoryController.clear();
-
-    //selectedCategory = text;
-    if (widget.categories.containsKey(text)) {
-        selectedCategory = text;
-      } else {
-        selectedCategory = null;
-      }
-
-    setState(() => loading = false);
-    
-   setState(() {});
-    showMsg(
-        tr.tr('category_added'));
+  if (widget.categories.containsKey(text)) {
+    showMsg(tr.tr('category_exists'));
+    return;
   }
+
+  setState(() => loading = true);
+
+  await widget.onAddCategory(text);
+
+  // Update UI immediately
+  widget.categories[text] = [];
+
+  categoryController.clear();
+
+  setState(() {
+    selectedCategory = text;
+    loading = false;
+  });
+
+  showMsg(tr.tr('category_added'));
+}
 
   //////////////////////////////////////////////////
   // ADD SUBCATEGORY
   //////////////////////////////////////////////////
 
-  Future<void> addSubCategory() async {
+Future<void> addSubCategory() async {
+  final sub = subCategoryController.text.trim();
 
-    final sub =
-        subCategoryController.text.trim();
+  final tr = AppLocalizations.of(context);
 
-    final tr =
-        AppLocalizations.of(context);
-
-    if (selectedCategory == null ||
-        sub.isEmpty) {
-      return;
-    }
-
-    if (widget.categories[
-            selectedCategory!]!
-        .contains(sub)) {
-
-      showMsg(
-          tr.tr('subcategory_exists'));
-
-      return;
-    }
-
-    setState(() => loading = true);
-
-    await widget.onAddSubCategory(
-      selectedCategory!,
-      sub,
-    );
-
-    subCategoryController.clear();
-
-    setState(() => loading = false);
-
-    showMsg(
-        tr.tr('subcategory_added'));
+  if (selectedCategory == null || sub.isEmpty) {
+    return;
   }
+
+  if (widget.categories[selectedCategory!]!.contains(sub)) {
+    showMsg(tr.tr('subcategory_exists'));
+    return;
+  }
+
+  setState(() => loading = true);
+
+  await widget.onAddSubCategory(
+    selectedCategory!,
+    sub,
+  );
+
+  // Update UI immediately
+  widget.categories[selectedCategory!]!.add(sub);
+
+  subCategoryController.clear();
+
+  setState(() {
+    loading = false;
+  });
+
+  showMsg(tr.tr('subcategory_added'));
+}
 
   @override
   Widget build(BuildContext context) {
@@ -457,31 +595,44 @@ Future<void> _loadFromDB() async {
         children: [
 
           Row(
-            children: [
+              children: [
 
-              const Icon(
-                Icons.folder,
-                color: Colors.teal,
-              ),
-
-              const SizedBox(width: 8),
-
-              Text(
-
-                tr.tr(entry.key),
-
-                style: TextStyle(
-
-                  fontSize: 16,
-
-                  fontWeight:
-                      FontWeight.bold,
-
-                  color: textColor,
+                const Icon(
+                  Icons.folder,
+                  color: Colors.teal,
                 ),
-              ),
-            ],
-          ),
+
+                const SizedBox(width: 8),
+
+                Expanded(
+                  child: Text(
+                    tr.tr(entry.key),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
+                  ),
+                ),
+
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    editCategory(entry.key);
+                  },
+                ),
+
+                IconButton(
+                  icon: const Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                  ),
+                  onPressed: () {
+                    deleteCategory(entry.key);
+                  },
+                ),
+              ],
+            ),
 
           const SizedBox(height: 10),
 
@@ -523,12 +674,46 @@ Future<void> _loadFromDB() async {
                                 20),
                       ),
 
-                      child: Text(
-                        tr.tr(sub),
-                        style: const TextStyle(
-                          fontSize: 12,
+                      child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+
+                        Text(
+                          tr.tr(sub),
                         ),
-                      ),
+
+                        const SizedBox(width: 5),
+
+                        GestureDetector(
+                          onTap: () {
+                            editSubCategory(
+                              entry.key,
+                              sub,
+                            );
+                          },
+                          child: const Icon(
+                            Icons.edit,
+                            size: 16,
+                          ),
+                        ),
+
+                        const SizedBox(width: 4),
+
+                        GestureDetector(
+                          onTap: () {
+                            deleteSubCategory(
+                              entry.key,
+                              sub,
+                            );
+                          },
+                          child: const Icon(
+                            Icons.close,
+                            size: 16,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
                     );
                   }).toList(),
                 ),

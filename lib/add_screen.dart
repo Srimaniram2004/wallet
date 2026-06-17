@@ -22,9 +22,8 @@ import 'db/db_helper.dart';
   }
 
   class _AddScreenState extends State<AddScreen> {
-    String selectedAccount = 'Personal';
-    String? selectedProject;
-   List<String> projects = [];
+    //String selectedAccount = 'Personal';
+    String selectedProfile = 'Personal';
 
     final controller = TextEditingController();
 
@@ -83,49 +82,18 @@ Future<void> pickCamera() async {
   }
 }
 
+Future<void> loadSelectedProfile() async {
+  final prefs = await SharedPreferences.getInstance();
 
-Future<void> showAddProjectDialog() async {
-  final projectController = TextEditingController();
+  selectedProfile =
+      prefs.getString('selectedProfile') ??
+      'Personal';
 
-  await showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Create Project"),
-        content: TextField(
-          controller: projectController,
-          decoration: const InputDecoration(
-            hintText: "Project Name",
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              if (projectController.text.trim().isEmpty) {
-                return;
-              }
-
-              await DBHelper.createProject(
-                projectController.text.trim(),
-              );
-
-              await loadProjects();
-
-              if (mounted) {
-                Navigator.pop(context);
-              }
-            },
-            child: const Text("Create"),
-          ),
-        ],
-      );
-    },
-  );
+  if (mounted) {
+    setState(() {});
+  }
 }
+
 Future<void> pickFile() async {
   final result =
       await FilePicker.platform.pickFiles();
@@ -171,7 +139,7 @@ void _setCategoryForType(String selectedType) {
 
       loadCurrency();
       
-      loadProjects();
+      loadSelectedProfile();
 
       if (widget.categories.isNotEmpty) {
         category = null;
@@ -180,17 +148,7 @@ void _setCategoryForType(String selectedType) {
     }
 
 
-    Future<void> loadProjects() async {
-  final data = await DBHelper.getProjects();
-
-  setState(() {
-    projects = data.map((e) => e['name'].toString()).toList();
-
-    if (projects.isNotEmpty) {
-      selectedProject = projects.first;
-    }
-  });
-}
+  
 
     //////////////////////////////////////////////////
     // LOAD CURRENCY
@@ -251,8 +209,8 @@ void _loadSubCategory() {
 
       'subCategory': subCategory,
       'attachment' : attachmentPath,
-      'account' : selectedAccount,
-      'project': selectedProject,
+      'account': selectedProfile,
+      'project': selectedProfile,
     });
   }
 
@@ -443,116 +401,57 @@ void _loadSubCategory() {
                   ),
                 ),
                   const SizedBox(height: 20),
-                Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Account & Project",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.teal,
-                  ),
-                ),
-              ),
-
-                const SizedBox(height: 20),
-
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: fieldColor,
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(
-                      color: Colors.teal.withOpacity(0.3),
-                    ),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: selectedAccount,
-                      isExpanded: true,
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'Personal',
-                          child: Row(
-                            children: [
-                              Icon(Icons.person),
-                              SizedBox(width: 10),
-                              Text('Personal'),
-                            ],
-                          ),
+                  Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(15),
+                     decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF1E3A3A)
+                            : Colors.teal.shade50,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: Colors.teal,
+                          width: 1.5,
                         ),
-                        DropdownMenuItem(
-                          value: 'Business',
-                          child: Row(
-                            children: [
-                              Icon(Icons.business),
-                              SizedBox(width: 10),
-                              Text('Business'),
-                            ],
-                          ),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          selectedAccount = value!;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 15),
-
-                  Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: fieldColor,
-                              borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                           Icon(
+                           
+                              selectedProfile == "Business"
+                                  ? Icons.business
+                                  : Icons.person,
+                              color: Colors.teal,
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: selectedProject,
-                                hint: const Text("Select Project"),
-                                isExpanded: true,
-                                items: projects.map((e) {
-                                  return DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e),
-                                  );
-                                }).toList(),
-                                onChanged: (v) {
-                                  setState(() {
-                                    selectedProject = v;
-                                  });
-                                },
+                        
+                      
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Current Profile: ",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: isDark ? Colors.white70 : Colors.black54,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: selectedProfile,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.teal,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        ),
-                         const SizedBox(height: 15),
-                        const SizedBox(width: 10),
-
-                        Container(
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.add,
-                            color: Colors.white,
-                          ),
-                          onPressed: showAddProjectDialog,
-                        ),
+                        ],
                       ),
-                      ],
                     ),
                     const SizedBox(height: 20),
                 //////////////////////////////////////////////////
