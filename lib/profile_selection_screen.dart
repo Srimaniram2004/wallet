@@ -8,11 +8,13 @@ import 'app_localization.dart';
 class ProfileSelectionScreen extends StatefulWidget {
   final bool isDark;
   final VoidCallback toggleTheme;
+    final ValueChanged<Locale> onLocaleChange;
 
   const ProfileSelectionScreen({
     super.key,
     required this.isDark,
     required this.toggleTheme,
+    required this.onLocaleChange,
   });
 
   @override
@@ -55,6 +57,8 @@ Future<void> selectProfile(String profile) async {
       builder: (_) => MainScreen(
         isDark: widget.isDark,
         toggleTheme: widget.toggleTheme,
+        onLocaleChange: widget.onLocaleChange,
+
       ),
     ),
   );

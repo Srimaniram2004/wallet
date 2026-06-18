@@ -6,6 +6,8 @@ import 'currency_screen.dart';
 import 'category_screen.dart';
 import 'report_screen.dart';
 import 'profile_management_screen.dart';
+import 'package:flutter_switch/flutter_switch.dart';
+
 
 class SettingsScreen extends StatelessWidget {
   final Function(Locale) onLanguageChanged;
@@ -95,6 +97,7 @@ Future<void> addCategory(String category) async {
                   context,
                   MaterialPageRoute(
                     builder: (_) => LanguageScreen(
+                      fromSettings: true,
                       onLanguageChanged: onLanguageChanged,
                       isDark: isDark,
                       toggleTheme: toggleTheme,
@@ -121,6 +124,7 @@ Future<void> addCategory(String category) async {
                     builder: (_) => CurrencyScreen(
                       isDark: isDark,
                       toggleTheme: toggleTheme,
+                       onLocaleChange: onLanguageChanged,
                     ),
                   ),
                 );
@@ -215,18 +219,40 @@ Future<void> addCategory(String category) async {
           // DARK MODE
           //////////////////////////////////////////////////
 
-          Card(
-            child: SwitchListTile(
-              secondary: Icon(
-                isDark
-                    ? Icons.dark_mode
-                    : Icons.light_mode,
+         Card(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
               ),
-              title: Text(tr.tr('dark_mode')),
-              value: isDark,
-              onChanged: (_) {
-                toggleTheme();
-              },
+              child: Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        isDark
+                            ? Icons.dark_mode
+                            : Icons.light_mode,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(tr.tr('dark_mode')),
+                    ],
+                  ),
+                 FlutterSwitch(
+                    width: 75,
+                    height: 35,
+                    value: isDark,
+                    showOnOff: true,
+                    activeText: "ON",
+                    inactiveText: "OFF",
+                    onToggle: (val) {
+                      toggleTheme();
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],

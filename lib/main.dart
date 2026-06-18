@@ -10,6 +10,7 @@ import 'report_screen.dart';
 
 import 'models/user_progress.dart';
 import 'widges/avatar_card.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 //mport 'services/xp_service.dart';
 //import 'services/streak_service.dart';
 // SMS SCREEN
@@ -144,6 +145,7 @@ class _SplashRouterState extends State<SplashRouter> {
           isDark: widget.isDark,
           toggleTheme: widget.toggleTheme,
           onLanguageChanged: (Locale locale) {
+            print("Language callback received: ${locale.languageCode}");
             widget.setLocale(locale);
           },
         );
@@ -153,6 +155,8 @@ class _SplashRouterState extends State<SplashRouter> {
       return CurrencyScreen(
         isDark: widget.isDark,
         toggleTheme: widget.toggleTheme,
+         onLocaleChange: widget.setLocale,
+     
       );
     }
 
@@ -200,6 +204,14 @@ class _WalletAppState extends State<WalletApp> {
   late Locale _locale;
   bool quoteShown = false;
 
+  Future<void> loadTheme() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  setState(() {
+    isDark = prefs.getBool('isDark') ?? false;
+  });
+}
+
   @override
  void initState() {
   super.initState();
@@ -207,6 +219,7 @@ class _WalletAppState extends State<WalletApp> {
   _locale = Locale(widget.initialLanguageCode);
 
   loadQuoteStatus();
+  loadTheme();
  // checkLoginStatus();
 }
 Future<void> loadQuoteStatus() async {
@@ -221,14 +234,18 @@ Future<void> loadQuoteStatus() async {
   });
 }
 
-  void toggleTheme() {
-    setState(() {
-      isDark = !isDark;
-    });
-  }
+void toggleTheme() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  setState(() {
+    isDark = !isDark;
+  });
+
+  await prefs.setBool('isDark', isDark);
+}
 
   void setLocale(Locale locale) {
-    
+    print("Root setLocale called: ${locale.languageCode}");
     setState(() {
       _locale = locale;
       
@@ -264,22 +281,25 @@ else if (!_currencyDone) {
   homeScreen = CurrencyScreen(
     isDark: isDark,
     toggleTheme: toggleTheme,
+    onLocaleChange: setLocale,
   );
 }
 else if (!quoteShown) {
   homeScreen = QuoteScreen(
     isDark: isDark,
     toggleTheme: toggleTheme,
+    onLocaleChange: setLocale,
   );
 }
 else {
   homeScreen = ProfileSelectionScreen(
     isDark: isDark,
     toggleTheme: toggleTheme,
+    onLocaleChange: setLocale,
   );
 }
     return MaterialApp(
-      key: ValueKey(_locale.languageCode),
+    // key: ValueKey(_locale.languageCode),
       locale: _locale,
       debugShowCheckedModeBanner: false,
 
@@ -578,7 +598,7 @@ Future<void> showProfileMenu() async {
                     Icons.info_outline,
                     color: Colors.blue,
                   ),
-                  title: Text("Wallet Winz"),
+                  title: Text("Wallet Wiz"),
                   subtitle:
                       Text("Personal Finance Manager"),
                 ),
@@ -706,6 +726,7 @@ Future<void> showProfileSelector() async {
                     builder: (_) => ProfileSelectionScreen(
                       isDark: widget.isDark,
                       toggleTheme: widget.toggleTheme,
+                        onLocaleChange: widget.onLocaleChange!,
                     ),
                   ),
                 );
@@ -946,11 +967,17 @@ for (var entry in sub.entries) {
       // REPORT
       //////////////////////////////////////////////////
 
-      SettingsScreen(
-  onLanguageChanged: widget.onLocaleChange ?? (_) {},
-  isDark: widget.isDark,
-  toggleTheme: widget.toggleTheme,
+    SettingsScreen(
+  onLanguageChanged: (Locale locale) {
+    print("MainScreen received locale: ${locale.languageCode}");
 
+    if (widget.onLocaleChange != null) {
+      widget.onLocaleChange!(locale);
+    }
+  },
+
+  isDark: Theme.of(context).brightness == Brightness.dark,
+  toggleTheme: widget.toggleTheme,
   transactions: transactions,
   categories: categories,
 
@@ -970,7 +997,7 @@ for (var entry in sub.entries) {
     );
     await loadData();
   },
-),  
+),
     ];
 
     return Scaffold(

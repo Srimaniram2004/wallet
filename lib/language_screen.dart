@@ -12,12 +12,15 @@ class LanguageScreen extends StatelessWidget {
 
   final bool isDark;
   final VoidCallback toggleTheme;
+  final bool fromSettings;
+   // final Function(Locale) onLocaleChange;
 
   const LanguageScreen({
     super.key,
     required this.onLanguageChanged,
     required this.isDark,
     required this.toggleTheme,
+     this.fromSettings = false,
   });
 
   //////////////////////////////////////////////////
@@ -41,20 +44,30 @@ class LanguageScreen extends StatelessWidget {
       true,
     );
 
-    onLanguageChanged(
-      Locale(languageCode),
-    );
-    
+  
+  
+print("Selected language: $languageCode");
+print("Calling callback...");
+   onLanguageChanged(
+  Locale(languageCode),
+);
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => CurrencyScreen(
-          isDark: isDark,
-          toggleTheme: toggleTheme,
-        ),
+
+if (fromSettings) {
+  Navigator.pop(context);
+} else {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (_) => CurrencyScreen(
+        isDark: isDark,
+        toggleTheme: toggleTheme,
+     onLocaleChange: onLanguageChanged,
+
       ),
-    );
+    ),
+  );
+}
   }
 
   //////////////////////////////////////////////////

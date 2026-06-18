@@ -9,11 +9,14 @@ import 'app_localization.dart';
 class CurrencyScreen extends StatefulWidget {
   final bool isDark;
   final VoidCallback toggleTheme;
+    final Function(Locale) onLocaleChange;
+  
 
   const CurrencyScreen({
     super.key,
     required this.isDark,
     required this.toggleTheme,
+    required this.onLocaleChange,
   });
 
   @override
@@ -121,6 +124,7 @@ class _CurrencyScreenState
     builder: (_) => QuoteScreen(
       isDark: widget.isDark,
       toggleTheme: widget.toggleTheme,
+       onLocaleChange: widget.onLocaleChange,
     ),
   ),
 );
@@ -209,30 +213,7 @@ class _CurrencyScreenState
 
                 const SizedBox(height: 12),
 
-                //////////////////////////////////////////////////
-                // SUBTITLE
-                //////////////////////////////////////////////////
-
-               /* Text(
-                  AppLocalizations.of(context).tr(
-                    'choose_currency_subtitle',
-                  ),
-
-                  style: TextStyle(
-
-                    color: Colors.white70,
-
-                    fontSize: 17,
-
-                    height: 1.5,
-                  ),
-                ),
-
-                const SizedBox(height: 40),*/
-
-                //////////////////////////////////////////////////
-                // CURRENCY LIST
-                //////////////////////////////////////////////////
+                
 
                 Expanded(
 

@@ -13,11 +13,13 @@ import 'profile_selection_screen.dart';
 class QuoteScreen extends StatefulWidget {
   final bool isDark;
   final VoidCallback toggleTheme;
+    final Function(Locale) onLocaleChange;
 
   const QuoteScreen({
     super.key,
     required this.isDark,
     required this.toggleTheme,
+    required this.onLocaleChange,
   });
 
   @override
@@ -92,6 +94,7 @@ class _QuoteScreenState
       builder: (_) => ProfileSelectionScreen(
         isDark: widget.isDark,
         toggleTheme: widget.toggleTheme,
+         onLocaleChange: widget.onLocaleChange,
       ),
     ),
   );
@@ -112,6 +115,8 @@ class _QuoteScreenState
 
                 toggleTheme:
                     widget.toggleTheme,
+
+                 onLocaleChange: widget.onLocaleChange,
               ),
             ),
           );
