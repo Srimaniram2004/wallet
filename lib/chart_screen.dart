@@ -198,7 +198,13 @@ List<Map<String, dynamic>> get filteredTransactions {
       Colors.purple,
       Colors.teal,
     ];
+        final profileBg = isDark
+            ? const Color(0xFF1E1E1E)
+            : Colors.teal.shade50;
 
+        final profileBorder = isDark
+            ? Colors.grey.shade700
+            : Colors.teal;
     return Scaffold(
       backgroundColor: bgColor,
 
@@ -231,36 +237,37 @@ List<Map<String, dynamic>> get filteredTransactions {
                   const SizedBox(height: 20),
 
                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              color: Colors.teal.shade50,
-                              borderRadius: BorderRadius.circular(15),
-                              border: Border.all(
-                                color: Colors.teal,
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: profileBg,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: profileBorder,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            selectedProfile == "Business"
+                                ? Icons.business
+                                : Icons.person,
+                            color: isDark ? Colors.tealAccent : Colors.teal,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              "Profile : $selectedProfile",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
                               ),
                             ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  selectedProfile == "Business"
-                                      ? Icons.business
-                                      : Icons.person,
-                                  color: Colors.teal,
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    "Profile : $selectedProfile",
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
+                        ],
+                      ),
+                    ),
                           const SizedBox(height: 20),
 
                   Container(
