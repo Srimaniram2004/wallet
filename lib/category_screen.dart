@@ -67,7 +67,6 @@ class _CategoryScreenState
       dummySubCategories;
 
   @override
-@override
 void initState() {
   super.initState();
   _loadFromDB();

@@ -19,49 +19,41 @@ class SettingsScreen extends StatelessWidget {
 
   final Future<void> Function(String) onAddCategory;
   final Future<void> Function(String, String) onAddSubCategory;
-Future<void> addCategory(String category) async {
-  }
 
-  Future<void> addSubCategory(
-    String category,
-    String subCategory,
-  ) async {
-  }
-
-  Future<void> editCategory(
+   final Future<void> Function(
     String oldName,
     String newName,
-  ) async {
-  }
+  ) onEditCategory;
 
-  Future<void> deleteCategory(
+  final Future<void> Function(
     String category,
-  ) async {
-  }
+  ) onDeleteCategory;
 
-  Future<void> editSubCategory(
+  final Future<void> Function(
     String category,
     String oldSub,
     String newSub,
-  ) async {
-  }
+  ) onEditSubCategory;
 
-  Future<void> deleteSubCategory(
+  final Future<void> Function(
     String category,
     String subCategory,
-  ) async {
-  }
+  ) onDeleteSubCategory;
 
   const SettingsScreen({
-    super.key,
-    required this.onLanguageChanged,
-    required this.isDark,
-    required this.toggleTheme,
-    required this.transactions,
-    required this.categories,
-    required this.onAddCategory,
-    required this.onAddSubCategory,
-  });
+  super.key,
+  required this.onLanguageChanged,
+  required this.isDark,
+  required this.toggleTheme,
+  required this.transactions,
+  required this.categories,
+  required this.onAddCategory,
+  required this.onAddSubCategory,
+  required this.onEditCategory,
+  required this.onDeleteCategory,
+  required this.onEditSubCategory,
+  required this.onDeleteSubCategory,
+});
 
   @override
   Widget build(BuildContext context) {
@@ -193,20 +185,20 @@ Future<void> addCategory(String category) async {
                   context,
                   MaterialPageRoute(
                     builder: (_) =>CategoryScreen(
-                      categories: categories,
+                  categories: categories,
 
-                      onAddCategory: addCategory,
+                  onAddCategory: onAddCategory,
 
-                      onAddSubCategory: addSubCategory,
+                  onAddSubCategory: onAddSubCategory,
 
-                      onEditCategory: editCategory,
+                  onEditCategory: onEditCategory,
 
-                      onDeleteCategory: deleteCategory,
+                  onDeleteCategory: onDeleteCategory,
 
-                      onEditSubCategory: editSubCategory,
+                  onEditSubCategory: onEditSubCategory,
 
-                      onDeleteSubCategory: deleteSubCategory,
-                    )
+                  onDeleteSubCategory: onDeleteSubCategory,
+                )
                   ),
                 );
               },

@@ -967,10 +967,8 @@ for (var entry in sub.entries) {
       // REPORT
       //////////////////////////////////////////////////
 
-    SettingsScreen(
+   SettingsScreen(
   onLanguageChanged: (Locale locale) {
-    print("MainScreen received locale: ${locale.languageCode}");
-
     if (widget.onLocaleChange != null) {
       widget.onLocaleChange!(locale);
     }
@@ -978,6 +976,7 @@ for (var entry in sub.entries) {
 
   isDark: Theme.of(context).brightness == Brightness.dark,
   toggleTheme: widget.toggleTheme,
+
   transactions: transactions,
   categories: categories,
 
@@ -994,6 +993,49 @@ for (var entry in sub.entries) {
       selectedAccount,
       category,
       sub,
+    );
+    await loadData();
+  },
+
+  onEditCategory: (oldName, newName) async {
+    await DBHelper.updateCategory(
+      selectedAccount,
+      oldName,
+      newName,
+    );
+    await loadData();
+  },
+
+  onDeleteCategory: (category) async {
+    await DBHelper.deleteCategory(
+      selectedAccount,
+      category,
+    );
+    await loadData();
+  },
+
+  onEditSubCategory: (
+    category,
+    oldSub,
+    newSub,
+  ) async {
+    await DBHelper.updateSubCategory(
+      selectedAccount,
+      category,
+      oldSub,
+      newSub,
+    );
+    await loadData();
+  },
+
+  onDeleteSubCategory: (
+    category,
+    subCategory,
+  ) async {
+    await DBHelper.deleteSubCategory(
+      selectedAccount,
+      category,
+      subCategory,
     );
     await loadData();
   },

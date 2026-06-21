@@ -41,7 +41,7 @@ class DBHelper {
 
     _db = await openDatabase(
       path,
-      version: 11,
+      version: 12,
       onCreate: (db, version) async {
         // USERS
         await db.execute('''
@@ -86,7 +86,8 @@ class DBHelper {
           CREATE TABLE categories(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             account TEXT,
-            name TEXT UNIQUE
+            name TEXT ,
+             UNIQUE(account,name)
           )
         ''');
 
@@ -97,7 +98,8 @@ class DBHelper {
             account TEXT,
             category TEXT,
             name TEXT,
-            UNIQUE(category, name)
+            UNIQUE(account, category, name)
+
           )
         ''');
 
@@ -379,6 +381,104 @@ static Future<void> insertSubCategory(
       'category': category,
       'name': name,
     },
+  );
+}
+// =============================
+// EDIT CATEGORY
+// =============================
+// UPDATE CATEGORY
+static Future<void> updateCategory(
+  String account,
+  String oldName,
+  String newName,
+) async {
+  final db = await getDB();
+
+  await db.update(
+    'categories',
+    {
+      'name': newName.trim().toLowerCase(),
+    },
+    where: 'account = ? AND name = ?',
+    whereArgs: [account, oldName],
+  );
+
+  await db.update(
+    'subcategories',
+    {
+      'category': newName.trim().toLowerCase(),
+    },
+    where: 'account = ? AND category = ?',
+    whereArgs: [account, oldName],
+  );
+}
+
+// UPDATE SUBCATEGORY
+static Future<void> updateSubCategory(
+  String account,
+  String category,
+  String oldSub,
+  String newSub,
+) async {
+  final db = await getDB();
+
+  await db.update(
+    'subcategories',
+    {
+      'name': newSub.trim(),
+    },
+    where: 'account = ? AND category = ? AND name = ?',
+    whereArgs: [
+      account,
+      category,
+      oldSub,
+    ],
+  );
+}
+
+// =============================
+// DELETE CATEGORY
+// =============================
+static Future<void> deleteCategory(
+  String account,
+  String category,
+) async {
+  final db = await getDB();
+
+  await db.delete(
+    'categories',
+    where: 'account = ? AND name = ?',
+    whereArgs: [account, category],
+  );
+
+  await db.delete(
+    'subcategories',
+    where: 'account = ? AND category = ?',
+    whereArgs: [account, category],
+  );
+}
+
+
+
+// =============================
+// DELETE SUBCATEGORY
+// =============================
+static Future<void> deleteSubCategory(
+  String account,
+  String category,
+  String subCategory,
+) async {
+  final db = await getDB();
+
+  await db.delete(
+    'subcategories',
+    where:
+        'account = ? AND category = ? AND name = ?',
+    whereArgs: [
+      account,
+      category,
+      subCategory,
+    ],
   );
 }
 
