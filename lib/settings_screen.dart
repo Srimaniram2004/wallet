@@ -247,7 +247,118 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
+              
+const SizedBox(height: 30),
+
+Container(
+  width: double.infinity,
+  padding: const EdgeInsets.symmetric(
+    horizontal: 20,
+    vertical: 16,
+  ),
+  decoration: BoxDecoration(
+    color: Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFF1A1A1A)
+        : Colors.white,
+    borderRadius: BorderRadius.circular(16),
+    boxShadow: [
+      BoxShadow(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.black26
+            : Colors.black12,
+        blurRadius: 8,
+      ),
+    ],
+  ),
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.business,
+            color: Colors.teal,
+            size: 18,
+          ),
+
+          const SizedBox(width: 8),
+
+          Text(
+            tr.tr('company_name'),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.teal,
+            ),
+          ),
         ],
+      ),
+
+      const SizedBox(height: 10),
+
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.email_outlined,
+            size: 16,
+            color:
+                Theme.of(context).brightness ==
+                        Brightness.dark
+                    ? Colors.white70
+                    : Colors.black54,
+          ),
+
+          const SizedBox(width: 6),
+
+          Text(
+            tr.tr('email'),
+            style: TextStyle(
+              fontSize: 13,
+              color:
+                  Theme.of(context).brightness ==
+                          Brightness.dark
+                      ? Colors.white70
+                      : Colors.black54,
+            ),
+          ),
+        ],
+      ),
+
+      const SizedBox(height: 12),
+
+      Divider(
+        height: 1,
+        color:
+            Theme.of(context).brightness ==
+                    Brightness.dark
+                ? Colors.white10
+                : Colors.black12,
+      ),
+
+      const SizedBox(height: 10),
+
+      Text(
+        "© 2026 CAPTV8",
+        style: TextStyle(
+          fontSize: 12,
+          color:
+              Theme.of(context).brightness ==
+                      Brightness.dark
+                  ? Colors.white54
+                  : Colors.black45,
+        ),
+      ),
+    ],
+  ),
+),
+
+const SizedBox(height: 20),
+
+        ],
+        
       ),
     );
   }

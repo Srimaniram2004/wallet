@@ -35,7 +35,65 @@ class AppLocalizations {
     Locale('ur'),
     Locale('or'),
   ];
+  /*String get personal {
+  switch (locale.languageCode) {
+    case 'ta':
+      return 'தனிப்பட்டது';
+    case 'hi':
+      return 'व्यक्तिगत';
+    case 'te':
+      return 'వ్యక్తిగతం';
+    case 'ml':
+      return 'വ്യക്തിഗതം';
+    case 'kn':
+      return 'ವೈಯಕ್ತಿಕ';
+    case 'bn':
+      return 'ব্যক্তিগত';
+    case 'gu':
+      return 'વ્યક્તિગત';
+    case 'mr':
+      return 'वैयक्तिक';
+    case 'pa':
+      return 'ਨਿੱਜੀ';
+    case 'ur':
+      return 'ذاتی';
+    case 'or':
+      return 'ବ୍ୟକ୍ତିଗତ';
+    default:
+      return 'Personal';
+  }
+}
 
+
+String get business {
+  switch (locale.languageCode) {
+    case 'ta':
+      return 'வணிகம்';
+    case 'hi':
+      return 'व्यवसाय';
+    case 'te':
+      return 'వ్యాపారం';
+    case 'ml':
+      return 'ബിസിനസ്';
+    case 'kn':
+      return 'ವ್ಯವಹಾರ';
+    case 'bn':
+      return 'ব্যবসা';
+    case 'gu':
+      return 'વ્યવસાય';
+    case 'mr':
+      return 'व्यवसाय';
+    case 'pa':
+      return 'ਕਾਰੋਬਾਰ';
+    case 'ur':
+      return 'کاروبار';
+    case 'or':
+      return 'ବ୍ୟବସାୟ';
+    default:
+      return 'Business';
+  }
+}
+*/
   //////////////////////////////////////////////////
   // TRANSLATIONS
   //////////////////////////////////////////////////
@@ -223,8 +281,14 @@ class AppLocalizations {
   "enter_project_name": "Enter Project Name",
   "project_already_exists": "Project already exists",
   //"cancel": "Cancel",
-  "create": "Create"
+  "create": "Create",
+   'developed_by': 'Developed by',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'Contact',
+    'email': 'captv8tech@gmail.com',
 
+
+  'Email': 'Email',
 
 
 
@@ -415,7 +479,12 @@ class AppLocalizations {
   "enter_project_name": "திட்டத்தின் பெயரை உள்ளிடவும்",
   "project_already_exists": "திட்டம் ஏற்கனவே உள்ளது",
   //"cancel": "ரத்து செய்",
-  "create": "உருவாக்கு"
+  "create": "உருவாக்கு",
+  'developed_by': 'உருவாக்கியது',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'தொடர்பு',
+    'email': 'captv8tech@gmail.com',
+    'Email': 'மின்னஞ்சல்',
     },
 
     //////////////////////////////////////////////////
@@ -600,7 +669,12 @@ class AppLocalizations {
   "enter_project_name": "परियोजना का नाम दर्ज करें",
   "project_already_exists": "परियोजना पहले से मौजूद है",
   //"cancel": "रद्द करें",
-  "create": "बनाएँ"
+  "create": "बनाएँ",
+   'developed_by': 'द्वारा विकसित',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'संपर्क करें',
+    'email': 'captv8tech@gmail.com',
+    'Email': 'ईमेल',
   },
   
           //////////////////////////////////////////////////
@@ -780,7 +854,12 @@ class AppLocalizations {
   "enter_project_name": "ప్రాజెక్ట్ పేరు నమోదు చేయండి",
   "project_already_exists": "ప్రాజెక్ట్ ఇప్పటికే ఉంది",
   //"cancel": "రద్దు",
-  "create": "సృష్టించు"
+  "create": "సృష్టించు",
+    'developed_by': 'అభివృద్ధి చేసిన వారు',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'సంప్రదించండి',
+    'email': 'captv8tech@gmail.com',
+    'Email': 'ఇమెయిల్',
 
           },
 
@@ -963,7 +1042,12 @@ class AppLocalizations {
   "enter_project_name": "പ്രോജക്റ്റിന്റെ പേര് നൽകുക",
   "project_already_exists": "പ്രോജക്റ്റ് ഇതിനകം നിലവിലുണ്ട്",
   //"cancel": "റദ്ദാക്കുക",
-  "create": "സൃഷ്ടിക്കുക"
+  "create": "സൃഷ്ടിക്കുക",
+  'developed_by': 'വികസിപ്പിച്ചത്',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'ബന്ധപ്പെടുക',
+    'email': 'captv8tech@gmail.com',
+        'Email': 'ഇമെയിൽ',
           },
 
           //////////////////////////////////////////////////
@@ -1145,7 +1229,12 @@ class AppLocalizations {
   "enter_project_name": "ಯೋಜನೆಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
   "project_already_exists": "ಯೋಜನೆ ಈಗಾಗಲೇ ಅಸ್ತಿತ್ವದಲ್ಲಿದೆ",
   //"cancel": "ರದ್ದುಮಾಡಿ",
-  "create": "ರಚಿಸಿ"
+  "create": "ರಚಿಸಿ",
+   'developed_by': 'ಅಭಿವೃದ್ಧಿಪಡಿಸಿದವರು',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'ಸಂಪರ್ಕಿಸಿ',
+    'email': 'captv8tech@gmail.com',
+    'Email': 'ಇಮೇಲ್',
           },
 
 
@@ -1304,7 +1393,12 @@ class AppLocalizations {
   "enter_project_name": "প্রকল্পের নাম লিখুন",
   "project_already_exists": "প্রকল্প ইতিমধ্যেই বিদ্যমান",
   //"cancel": "বাতিল",
-  "create": "তৈরি করুন"
+  "create": "তৈরি করুন",
+  'developed_by': 'দ্বারা তৈরি',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'যোগাযোগ',
+    'email': 'captv8tech@gmail.com',
+     'Email': 'ইমেইল',
         },
 
         //////////////////////////////////////////////////
@@ -1461,7 +1555,12 @@ class AppLocalizations {
   "enter_project_name": "પ્રોજેક્ટનું નામ દાખલ કરો",
   "project_already_exists": "પ્રોજેક્ટ પહેલેથી અસ્તિત્વમાં છે",
   //"cancel": "રદ કરો",
-  "create": "બનાવો"
+  "create": "બનાવો",
+  'developed_by': 'દ્વારા વિકસિત',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'સંપર્ક કરો',
+    'email': 'captv8tech@gmail.com',
+       'Email': 'ઈમેલ',
         },
 
         //////////////////////////////////////////////////
@@ -1618,7 +1717,12 @@ class AppLocalizations {
   "enter_project_name": "प्रकल्पाचे नाव प्रविष्ट करा",
   "project_already_exists": "प्रकल्प आधीपासून अस्तित्वात आहे",
   //"cancel": "रद्द करा",
-  "create": "तयार करा"
+  "create": "तयार करा",
+  'developed_by': 'द्वारे विकसित',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'संपर्क',
+    'email': 'captv8tech@gmail.com',
+       'Email': 'ईमेल',
 
         },
 
@@ -1778,7 +1882,12 @@ class AppLocalizations {
   "enter_project_name": "ਪ੍ਰੋਜੈਕਟ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
   "project_already_exists": "ਪ੍ਰੋਜੈਕਟ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੈ",
   //"cancel": "ਰੱਦ ਕਰੋ",
-  "create": "ਬਣਾਓ"
+  "create": "ਬਣਾਓ",
+   'developed_by': 'ਦੁਆਰਾ ਵਿਕਸਤ',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'ਸੰਪਰਕ ਕਰੋ',
+    'email': 'captv8tech@gmail.com',
+      'Email': 'ਈਮੇਲ',
         },
 
         //////////////////////////////////////////////////
@@ -1935,7 +2044,12 @@ class AppLocalizations {
   "enter_project_name": "پروجیکٹ کا نام درج کریں",
   "project_already_exists": "پروجیکٹ پہلے سے موجود ہے",
   //"cancel": "منسوخ کریں",
-  "create": "بنائیں"
+  "create": "بنائیں",
+   'developed_by': 'تیار کردہ',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'رابطہ کریں',
+    'email': 'captv8tech@gmail.com',
+    'Email': 'ای میل',
         },
 
         //////////////////////////////////////////////////
@@ -2093,7 +2207,12 @@ class AppLocalizations {
   "enter_project_name": "ପ୍ରକଳ୍ପର ନାମ ପ୍ରବେଶ କରନ୍ତୁ",
   "project_already_exists": "ପ୍ରକଳ୍ପ ପୂର୍ବରୁ ଅବସ୍ଥିତ",
   //"cancel": "ବାତିଲ୍",
-  "create": "ସୃଷ୍ଟି କରନ୍ତୁ"
+  "create": "ସୃଷ୍ଟି କରନ୍ତୁ",
+   'developed_by': 'ଦ୍ୱାରା ବିକଶିତ',
+    'company_name': 'CAPTV8 SOLUTIONS PRIVATE LTD',
+    'contact': 'ଯୋଗାଯୋଗ',
+    'email': 'captv8tech@gmail.com',
+     'Email': 'ଇମେଲ୍',
 
         },
       };

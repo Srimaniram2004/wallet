@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'app_localization.dart';
 
 class ProfileManagementScreen extends StatefulWidget {
   const ProfileManagementScreen({
@@ -16,7 +17,7 @@ class _ProfileManagementScreenState
   List<String> defaultProfiles = [
     'Personal',
     'Business',
-    'New Home',
+
   ];
 
   List<String> projects = [];
@@ -71,8 +72,9 @@ class _ProfileManagementScreenState
     ScaffoldMessenger.of(context)
         .showSnackBar(
       SnackBar(
-        content: Text(
-          '$profile selected',
+       content: Text(
+          '${AppLocalizations.of(context)
+              .translate(profile.toLowerCase())} selected',
         ),
       ),
     );
@@ -220,7 +222,10 @@ class _ProfileManagementScreenState
     return Card(
       child: ListTile(
         leading: Icon(icon),
-        title: Text(profile),
+          title: Text(
+          AppLocalizations.of(context)
+              .translate(profile.toLowerCase()),
+        ),
         trailing: isSelected
             ? const Icon(
                 Icons.check_circle,
@@ -282,10 +287,7 @@ class _ProfileManagementScreenState
             Icons.business,
           ),
 
-          buildProfileTile(
-            'New Home',
-            Icons.home,
-          ),
+          
 
           const SizedBox(height: 25),
 

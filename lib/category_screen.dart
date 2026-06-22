@@ -320,13 +320,16 @@ Future<void> addSubCategory() async {
     final bgColor = dark
         ? const Color(0xFF121212)
         : const Color(0xFFF5F6FA);
+final cardColor = dark
+    ? const Color(0xFF202124)   // dark card
+    : Colors.white;             // light card
 
-    final cardColor = dark
-        ? const Color(0xFF1E1E1E)
-        : Colors.white;
+final inputColor = dark
+    ? const Color(0xFF303134)   // dark input
+    : const Color(0xFFF1F5F9);  // light input
 
-    final textColor =
-        dark ? Colors.white : Colors.black;
+final textColor =
+    dark ? Colors.white : const Color(0xFF222222);
 
     return Scaffold(
 
@@ -780,27 +783,44 @@ Future<void> addSubCategory() async {
   // INPUT DECORATION
   //////////////////////////////////////////////////
 
-  InputDecoration _inputDecoration(
-      String hint) {
+InputDecoration _inputDecoration(
+    String hint) {
 
-    return InputDecoration(
+  final dark =
+      Theme.of(context).brightness ==
+          Brightness.dark;
 
-      hintText: hint,
+  return InputDecoration(
 
-      filled: true,
+    hintText: hint,
 
-      fillColor:
-          Colors.grey.withOpacity(0.1),
+    hintStyle: TextStyle(
+      color: dark
+          ? Colors.grey.shade400
+          : Colors.grey.shade600,
+    ),
 
-      border: OutlineInputBorder(
+    filled: true,
 
-        borderRadius:
-            BorderRadius.circular(14),
+    fillColor: dark
+        ? const Color(0xFF303134)
+        : const Color(0xFFF1F5F9),
 
-        borderSide: BorderSide.none,
-      ),
-    );
-  }
+    border: OutlineInputBorder(
+
+      borderRadius:
+          BorderRadius.circular(14),
+
+      borderSide: BorderSide.none,
+    ),
+
+    contentPadding:
+        const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 15,
+    ),
+  );
+}
 
   //////////////////////////////////////////////////
   // BUTTON
@@ -823,7 +843,12 @@ Future<void> addSubCategory() async {
         style:
             ElevatedButton.styleFrom(
 
-          backgroundColor: Colors.teal,
+          backgroundColor:
+          Theme.of(context).brightness ==
+            Brightness.dark
+        ? const Color(0xFF00BFA5)
+        : const Color(0xFF00897B),
+        
 
           padding:
               const EdgeInsets.symmetric(
@@ -837,7 +862,13 @@ Future<void> addSubCategory() async {
           ),
         ),
 
-        child: Text(text),
+       child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       ),
     );
   }

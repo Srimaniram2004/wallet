@@ -164,89 +164,6 @@ Future<void> exportExcel() async {
     ),
   );
 }
-
-  //////////////////////////////////////////////////
-  // UPLOAD PDF
-  //////////////////////////////////////////////////
-
-Future<void> uploadPDF() async {
-  final t = AppLocalizations.of(context);
-
-  FilePickerResult? result =
-      await FilePicker.platform.pickFiles(
-    type: FileType.custom,
-    allowedExtensions: ['pdf'],
-  );
-
-  if (result == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          t.translate("no_pdf_selected"),
-        ),
-      ),
-    );
-    return;
-  }
-
-  final file = result.files.single;
-
-  try {
-    //////////////////////////////////////////////////
-    // USER LANGUAGE
-    //////////////////////////////////////////////////
-
-    String language =
-        Localizations.localeOf(context)
-            .languageCode;
-
-    //////////////////////////////////////////////////
-    // SAMPLE EXPENSE
-    //////////////////////////////////////////////////
-
-    await DBHelper.insertPDFTransaction(
-      amount: 500,
-      type: "Expense",
-      category: "Others",
-      subCategory: "General",
-      language: language,
-      note: "Imported PDF: ${file.name}",
-    );
-
-    //////////////////////////////////////////////////
-    // SAMPLE INCOME
-    //////////////////////////////////////////////////
-
-    await DBHelper.insertPDFTransaction(
-      amount: 10000,
-      type: "Income",
-      category: "Salary",
-      subCategory: "Monthly Salary",
-      language: language,
-      note: "Imported PDF: ${file.name}",
-    );
-
-    widget.onRefresh();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "${t.translate("pdf_imported")}: ${file.name}",
-        ),
-        backgroundColor: Colors.green,
-      ),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "${t.translate("pdf_failed")} : $e",  
-        ),
-      ),
-    );
-  }
-}
-
   //////////////////////////////////////////////////
   // UI
   //////////////////////////////////////////////////
@@ -382,12 +299,7 @@ Future<void> uploadPDF() async {
 
             const SizedBox(height: 14),
 
-            _premiumButton(
-              color: Colors.blue,
-              icon: Icons.upload_file,
-              title: t.translate("upload_pdf"),
-              onTap: uploadPDF,
-            ),
+            
           ],
         ),
       ),

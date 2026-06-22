@@ -24,6 +24,7 @@ import 'db/db_helper.dart';
   class _AddScreenState extends State<AddScreen> {
     //String selectedAccount = 'Personal';
     String selectedProfile = 'Personal';
+    Locale? _lastLocale;
 
     final controller = TextEditingController();
 
@@ -31,13 +32,19 @@ import 'db/db_helper.dart';
     String type = "expense";  
 
     @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
 
-    type ??=
-        AppLocalizations.of(context)
-            .translate('expense');
+void didChangeDependencies() {
+  super.didChangeDependencies();
+
+  final currentLocale =
+      Localizations.localeOf(context);
+
+  if (_lastLocale != currentLocale) {
+    _lastLocale = currentLocale;
+
+    loadCategoriesFromDB();
   }
+}
 
 
 
@@ -67,6 +74,7 @@ Future<void> pickImage() async {
     });
   }
 }
+
 Future<void> pickCamera() async {
   final picker = ImagePicker();
 
@@ -83,11 +91,16 @@ Future<void> pickCamera() async {
 }
 
 Future<void> loadSelectedProfile() async {
-  final prefs = await SharedPreferences.getInstance();
+  final prefs =
+      await SharedPreferences.getInstance();
 
   selectedProfile =
-      prefs.getString('selectedProfile') ??
+      prefs.getString(
+        'selectedProfile',
+      ) ??
       'Personal';
+
+  await loadCategoriesFromDB();
 
   if (mounted) {
     setState(() {});
@@ -104,6 +117,164 @@ Future<void> pickFile() async {
           result.files.single.path;
     });
   }
+}
+Future<void> loadCategoriesFromDB() async {
+  final cats =
+      await DBHelper.getCategories(
+    selectedProfile,
+  );
+
+  final subs =
+      await DBHelper.getSubCategories(
+    selectedProfile,
+  );
+
+  setState(() {
+    widget.categories.clear();
+
+    widget.categories.addAll(
+      cats.map(
+        (e) => e['name'].toString(),
+      ),
+    );
+
+    widget.subCategories.clear();
+    widget.subCategories.addAll(subs);
+  });
+}
+Future<void> _showAddCategoryDialog() async {
+  final TextEditingController categoryController =
+      TextEditingController();
+
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Add Category"),
+        content: TextField(
+          controller: categoryController,
+          decoration: const InputDecoration(
+            hintText: "Category name",
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+              onPressed: () async{
+                final newCategory =
+                    categoryController.text.trim();
+
+                if (widget.categories.any(
+                  (e) =>
+                      e.toLowerCase() ==
+                      newCategory.toLowerCase(),
+                )) {
+                  Navigator.pop(context);
+                  return;
+                }
+
+                if (newCategory.isNotEmpty) {
+                              await DBHelper.insertCategory(
+                selectedProfile,
+                newCategory,
+              );
+
+              setState(() {
+                widget.categories.add(newCategory);
+
+                widget.subCategories[
+                    newCategory.toLowerCase()] = [];
+
+                category = newCategory;
+                subCategory = null;
+              });
+                                
+
+                  Navigator.pop(context);
+                }
+              },
+            child: const Text("Add"),
+          ),
+        ],
+      );
+    },
+  );
+}
+Future<void> _showAddSubCategoryDialog() async {
+  if (category == null) return;
+
+  final TextEditingController subController =
+      TextEditingController();
+
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Add Subcategory"),
+        content: TextField(
+          controller: subController,
+          decoration: const InputDecoration(
+            hintText: "Subcategory name",
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () async{
+  final newSub =
+      subController.text.trim();
+
+  final existing =
+      widget.subCategories[
+              category!.toLowerCase()] ??
+          [];
+
+  if (existing.any(
+    (e) =>
+        e.toLowerCase() ==
+        newSub.toLowerCase(),
+  )) {
+    Navigator.pop(context);
+    return;
+  }
+
+  if (newSub.isNotEmpty) {
+   await DBHelper.insertSubCategory(
+  selectedProfile,
+  category!.toLowerCase(),
+  newSub,
+);
+
+setState(() {
+  widget.subCategories
+      .putIfAbsent(
+        category!.toLowerCase(),
+        () => [],
+      )
+      .add(newSub);
+
+  subCategory = newSub;
+});
+
+
+
+    Navigator.pop(context);
+  }
+},
+            child: const Text("Add"),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 
@@ -569,131 +740,131 @@ void _loadSubCategory() {
                 const SizedBox(height: 15),
                 
               //category dd
-
-                Container(
-
-                  padding:
-                      const EdgeInsets.symmetric(
-                    horizontal: 12,
-                  ),
-
-                  decoration: BoxDecoration(
-
-                    color: fieldColor,
-
-                    borderRadius:
-                        BorderRadius.circular(12),
-                  ),
-
-                  child: DropdownButtonHideUnderline(
-
-                    child: DropdownButton<String>(
-
-                    value: category,
-
-                    hint: Text(
-                      AppLocalizations.of(context)
-                          .translate('select_category'),
-                      style: TextStyle(
-                        color: textColor,
-                      ),
-                    ),
-
-                      dropdownColor: cardColor,
-
-                      isExpanded: true,
-
-                      items: widget.categories.map((e) {
-
-                        return DropdownMenuItem<String>(
-
-                          value: e,
-
-                        child: Text(
-                          AppLocalizations.of(context)
-                              .translate(e.toLowerCase()),
-                          style: TextStyle(
-                            color: textColor,
-                          ),
-                        ),
-                        );
-
-                    }).toList(),
-
-                    onChanged: (v) {
-
-                      setState(() {
-
-                        category = v;
-
-                        _loadSubCategory();
-                      });
-                    },
-                  ),
-                  ),
+              Row(
+  children: [
+    Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+        ),
+        decoration: BoxDecoration(
+          color: fieldColor,
+          borderRadius:
+              BorderRadius.circular(12),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: category,
+            hint: Text(
+              AppLocalizations.of(context)
+                  .translate(
+                      'select_category'),
+              style: TextStyle(
+                color: textColor,
+              ),
+            ),
+            dropdownColor: cardColor,
+            isExpanded: true,
+            items:
+                widget.categories.map((e) {
+              return DropdownMenuItem(
+                value: e,
+                child: Text(
+                AppLocalizations.of(context)
+                            .translate(e.toLowerCase()) ==
+                        e.toLowerCase()
+                    ? e
+                    : AppLocalizations.of(context)
+                        .translate(e.toLowerCase()),
+                style: TextStyle(
+                  color: textColor,
                 ),
+              ),
+              );
+            }).toList(),
+            onChanged: (v) {
+              setState(() {
+                category = v;
+                _loadSubCategory();
+              });
+            },
+          ),
+        ),
+      ),
+    ),
+
+    const SizedBox(width: 8),
+
+    IconButton(
+      icon: const Icon(
+        Icons.add_circle,
+        color: Colors.teal,
+      ),
+      onPressed: _showAddCategoryDialog,
+    ),
+  ],
+),
 
                 const SizedBox(height: 15),
 
-
-                if (subList.isNotEmpty)
-
-                  Container(
-
-                    padding:
-                        const EdgeInsets.symmetric(
-                      horizontal: 12,
-                    ),
-
-                    decoration: BoxDecoration(
-
-                      color: fieldColor,
-
-                      borderRadius:
-                          BorderRadius.circular(12),
-                    ),
-
-                    child: DropdownButtonHideUnderline(
-
-                      child: DropdownButton<String>(
-
-                        value: subCategory,
-
-                        hint:
-                            const Text(
-                          "Select Subcategory",
-                        ),
-
-                        dropdownColor: cardColor,
-
-                        isExpanded: true,
-
-                        items:
-                            subList.map((e) {
-
-                          return DropdownMenuItem(
-
-                            value: e,
-
-                            child: Text(
-                            AppLocalizations.of(context).tr(e),
-                            style: TextStyle(
-                              color: textColor,
-                            ),
-                          ),
-                          );
-                        }).toList(),
-
-                        onChanged: (v) {
-
-                          setState(() {
-
-                            subCategory = v;
-                          });
-                        },
-                      ),
-                    ),
+if (category != null)
+  Row(
+    children: [
+      Expanded(
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+          ),
+          decoration: BoxDecoration(
+            color: fieldColor,
+            borderRadius:
+                BorderRadius.circular(12),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: subCategory,
+              hint: const Text(
+                "Select Subcategory",
+              ),
+              dropdownColor: cardColor,
+              isExpanded: true,
+              items: subList.map((e) {
+                return DropdownMenuItem<String>(
+                  value: e,
+                  child: Text(
+                  AppLocalizations.of(context)
+                              .translate(e.toLowerCase()) ==
+                          e.toLowerCase()
+                      ? e
+                      : AppLocalizations.of(context)
+                          .translate(e.toLowerCase()),
+                  style: TextStyle(
+                    color: textColor,
                   ),
+                ),
+                );
+              }).toList(),
+              onChanged: (v) {
+                setState(() {
+                  subCategory = v;
+                });
+              },
+            ),
+          ),
+        ),
+      ),
+
+      const SizedBox(width: 8),
+
+      IconButton(
+        icon: const Icon(
+          Icons.add_circle,
+          color: Colors.teal,
+        ),
+        onPressed: _showAddSubCategoryDialog,
+      ),
+    ],
+  ),
                   const SizedBox(height: 15),
 
                     Container(
